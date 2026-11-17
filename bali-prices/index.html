@@ -3,834 +3,1070 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bali Prices in Pesos</title>
+<title>Bali Trip Kit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;700;800;900&family=Figtree:ital,wght@0,400;0,500;0,600;0,800;1,400&display=swap" rel="stylesheet">
 <style>
 /* Palette: #540D6E grape · #EE4266 coral · #FFD23F sun · #3BCEAC lagoon · #0EAD69 palm
-   Layout idea: a price sheet governed by one rate control — changing it visibly re-prices
-   every figure on the page, which is the moment the page is built around. */
+   Layout idea: seven in-page tabs over one rate control. Rounded, pill-heavy, with a
+   drawn map as the opening screen — shapes follow the coastline, not a grid. */
 :root{
   color-scheme: light;
-
-  /* brand colours, used raw as fills */
-  --grape:#540D6E;
-  --coral:#EE4266;
-  --sun:#FFD23F;
-  --lagoon:#3BCEAC;
-  --palm:#0EAD69;
-
-  /* surfaces + text, biased toward grape */
-  --paper:#f7f3fa;
-  --surface:#ffffff;
-  --surface-2:#faf7fc;
-  --ink:#200c2a;
-  --ink-soft:#5f4c6b;
-  --line:#e2d7ea;
-  --line-strong:#c9b4d6;
-
-  /* accessible text variants of the brand colours on light surfaces */
-  --t-grape:#540D6E;
-  --t-coral:#C31E45;
-  --t-palm:#07753F;
-  --t-lagoon:#126E5E;
-  --t-sun:#7A5A00;
-
-  --ring:#3BCEAC;
-  --display:"Bricolage Grotesque","Trebuchet MS",sans-serif;
-  --body:"Public Sans","Helvetica Neue",Arial,sans-serif;
-  --r:12px;
-  --fast:160ms;
-  --mid:240ms;
+  --grape:#540D6E; --coral:#EE4266; --sun:#FFD23F; --lagoon:#3BCEAC; --palm:#0EAD69;
+  --paper:#f6f1f9; --surface:#ffffff; --surface-2:#faf6fc; --sea:#e4f5f1;
+  --ink:#1f0a2a; --ink-soft:#64506f; --line:#e6dcee; --line-strong:#cbb3d8;
+  --t-grape:#540D6E; --t-coral:#BE1A40; --t-palm:#07703C; --t-lagoon:#0F6657; --t-sun:#7A5A00;
+  --display:"Darker Grotesque","Haettenschweiler",sans-serif;
+  --body:"Figtree","Helvetica Neue",Arial,sans-serif;
+  --r:22px; --r-sm:14px; --fast:150ms; --mid:260ms;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme: dark;
-    --paper:#140720;
-    --surface:#1e0f2b;
-    --surface-2:#271437;
-    --ink:#f3ecf7;
-    --ink-soft:#b49cc4;
-    --line:#3a2250;
-    --line-strong:#56356f;
-    --t-grape:#CE9BE4;
-    --t-coral:#FF7E9B;
-    --t-palm:#3FD98D;
-    --t-lagoon:#5FDCC6;
-    --t-sun:#FFD23F;
+    --paper:#120620; --surface:#1d0e2c; --surface-2:#271438; --sea:#10302c;
+    --ink:#f5eefa; --ink-soft:#b69ec6; --line:#3a2252; --line-strong:#5b3875;
+    --t-grape:#D4A3E8; --t-coral:#FF85A0; --t-palm:#3FDB8E; --t-lagoon:#5FDDC7; --t-sun:#FFD23F;
   }
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --paper:#140720;
-  --surface:#1e0f2b;
-  --surface-2:#271437;
-  --ink:#f3ecf7;
-  --ink-soft:#b49cc4;
-  --line:#3a2250;
-  --line-strong:#56356f;
-  --t-grape:#CE9BE4;
-  --t-coral:#FF7E9B;
-  --t-palm:#3FD98D;
-  --t-lagoon:#5FDCC6;
-  --t-sun:#FFD23F;
+  --paper:#120620; --surface:#1d0e2c; --surface-2:#271438; --sea:#10302c;
+  --ink:#f5eefa; --ink-soft:#b69ec6; --line:#3a2252; --line-strong:#5b3875;
+  --t-grape:#D4A3E8; --t-coral:#FF85A0; --t-palm:#3FDB8E; --t-lagoon:#5FDDC7; --t-sun:#FFD23F;
 }
-
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
-.wrap{max-width:920px;margin:0 auto;padding:0 20px 80px}
-h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
-h1{font-size:clamp(2.1rem,6.5vw,3.4rem);font-weight:800;letter-spacing:-.025em;line-height:1}
-h2{font-size:clamp(1.3rem,3.4vw,1.75rem);font-weight:800;letter-spacing:-.015em}
-h3{font-size:1rem;font-weight:800;letter-spacing:.005em}
-p{margin:0 0 .9em;max-width:66ch}
-a{color:var(--t-grape);text-underline-offset:3px;text-decoration-thickness:1.5px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.55}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 90px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(2.6rem,10vw,4.4rem);font-weight:900;line-height:.88}
+h2{font-size:clamp(1.7rem,5vw,2.3rem);font-weight:800;line-height:1}
+h3{font-size:1.25rem;font-weight:800;line-height:1.1}
+p{margin:0 0 .85em;max-width:64ch}
+a{color:var(--t-grape);text-underline-offset:3px}
 a:hover{color:var(--t-coral)}
-:focus-visible{outline:3px solid var(--ring);outline-offset:2px;border-radius:5px}
+:focus-visible{outline:3px solid var(--lagoon);outline-offset:2px;border-radius:8px}
+.muted{color:var(--ink-soft)}
+.small{font-size:.84rem}
 
 /* ---------- masthead ---------- */
-header.mast{padding:54px 0 24px}
-.kicker{display:inline-block;font-family:var(--display);font-weight:800;font-size:.72rem;letter-spacing:.16em;
-  text-transform:uppercase;color:#fff;background:var(--grape);padding:5px 11px;border-radius:99px;margin:0 0 18px}
-.stripe{display:flex;height:7px;border-radius:99px;overflow:hidden;margin:20px 0 0;max-width:420px}
-.stripe i{flex:1}
-.lede{font-size:1.14rem;color:var(--ink-soft);max-width:60ch;margin-top:18px}
+.mast{padding:30px 0 14px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.mast .who{font-family:var(--display);font-weight:800;font-size:1rem;letter-spacing:.1em;
+  text-transform:uppercase;color:#fff;background:var(--grape);padding:5px 14px;border-radius:99px}
+.mast .when{font-weight:600;font-size:.9rem;color:var(--ink-soft)}
 
-/* ---------- rate bar (the page's primary control) ---------- */
-.ratebar{position:sticky;top:0;z-index:30;background:var(--surface);border:2px solid var(--grape);
-  border-radius:var(--r);padding:12px 16px;margin:26px 0 38px;display:flex;flex-wrap:wrap;
-  gap:10px 20px;align-items:center;box-shadow:0 4px 18px rgba(84,13,110,.14)}
-.ratebar .lab{font-family:var(--display);font-size:.72rem;font-weight:800;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--t-grape)}
-.rate-field{display:flex;align-items:center;gap:7px;font-weight:600}
-.ratebar input{width:82px;font:700 1rem var(--body);font-variant-numeric:tabular-nums;padding:7px 9px;
-  border:2px solid var(--line-strong);border-radius:8px;background:var(--surface-2);color:var(--ink);
-  transition:border-color var(--fast) ease}
+/* ---------- rate bar, hides on scroll down ---------- */
+.ratebar{position:sticky;top:0;z-index:40;background:var(--surface);border:2px solid var(--grape);
+  border-radius:99px;padding:9px 10px 9px 18px;margin:12px 0 16px;display:flex;flex-wrap:wrap;
+  gap:8px 14px;align-items:center;box-shadow:0 6px 20px rgba(84,13,110,.13);
+  transition:transform var(--mid) ease,opacity var(--mid) ease}
+.ratebar.tucked{transform:translateY(-130%);opacity:0;pointer-events:none}
+.ratebar label{font-weight:600;font-size:.88rem;white-space:nowrap}
+.ratebar input{width:72px;font:700 .95rem var(--body);font-variant-numeric:tabular-nums;padding:6px 9px;
+  border:2px solid var(--line-strong);border-radius:99px;background:var(--surface-2);color:var(--ink)}
 .ratebar input:hover{border-color:var(--lagoon)}
-.ratebar input:focus{border-color:var(--lagoon)}
-.rate-eq{font-family:var(--display);font-weight:800;font-size:.95rem;font-variant-numeric:tabular-nums;
-  background:var(--sun);color:#3a2a00;padding:4px 10px;border-radius:99px}
-.rate-note{font-size:.79rem;color:var(--ink-soft);flex:1;min-width:180px}
-.rate-note b{color:var(--t-coral)}
+.rate-eq{font-family:var(--display);font-weight:800;font-size:1.05rem;font-variant-numeric:tabular-nums;
+  background:var(--sun);color:#3a2a00;padding:3px 13px;border-radius:99px;white-space:nowrap}
 
-/* ---------- sections ---------- */
-section{margin:0 0 46px}
-.sec-head{display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--grape);padding-bottom:9px;margin-bottom:18px}
-.sec-num{font-family:var(--display);font-weight:800;font-size:.76rem;background:var(--sun);color:#3a2a00;
-  padding:3px 9px;border-radius:99px;font-variant-numeric:tabular-nums;flex:none}
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:7px;overflow-x:auto;padding:3px 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{font-family:var(--display);font-weight:800;font-size:1.12rem;letter-spacing:.01em;padding:7px 17px;
+  border-radius:99px;border:2px solid var(--line-strong);background:var(--surface);color:var(--ink-soft);
+  cursor:pointer;white-space:nowrap;transition:all var(--fast) ease}
+.tab:hover{border-color:var(--lagoon);color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--grape);border-color:var(--grape);color:#fff}
+.panel[hidden]{display:none}
+.panel{animation:fade var(--mid) ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* ---------- blocks ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card.sea{background:var(--sea);border-color:transparent}
+.lead{font-size:1.06rem;color:var(--ink-soft);max-width:56ch}
+.pill{display:inline-block;font-family:var(--display);font-weight:800;font-size:.95rem;padding:3px 12px;
+  border-radius:99px;background:var(--sun);color:#3a2a00;margin-bottom:10px}
+.pill.lag{background:var(--lagoon);color:#06332c}
+.pill.cor{background:var(--coral);color:#fff}
+.pill.pal{background:var(--palm);color:#fff}
+.row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+hr.wave{border:0;height:18px;margin:26px 0;background:
+  radial-gradient(circle at 10px -6px, transparent 12px, var(--line-strong) 13px, transparent 14px) repeat-x 0 0/20px 18px}
+
+/* ---------- details / progressive disclosure ---------- */
+details{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:8px;overflow:hidden}
+details[open]{border-color:var(--lagoon)}
+summary{cursor:pointer;padding:13px 17px;font-weight:600;list-style:none;display:flex;align-items:center;
+  gap:10px;min-height:50px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;font-family:var(--display);font-weight:800;font-size:1.5rem;
+  color:var(--t-grape);line-height:1;transition:transform var(--fast) ease}
+details[open] summary::after{transform:rotate(45deg)}
+summary:hover{background:var(--surface-2)}
+.d-body{padding:0 17px 16px}
+.tag{font-family:var(--display);font-weight:800;font-size:.9rem;padding:2px 10px;border-radius:99px;
+  background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line)}
 
 /* ---------- tables ---------- */
-.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
-table{border-collapse:collapse;width:100%;min-width:440px;font-size:.93rem}
-th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
-thead th{background:var(--grape);color:#fff;font-family:var(--display);font-size:.7rem;letter-spacing:.09em;
-  text-transform:uppercase;white-space:nowrap;border-bottom:0}
+.tw{overflow-x:auto;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:380px;font-size:.92rem}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--line)}
+thead th{background:var(--grape);color:#fff;font-family:var(--display);font-size:1rem;
+  letter-spacing:.02em;white-space:nowrap;border:0}
 tbody tr:last-child td{border-bottom:0}
-tbody tr:hover{background:var(--surface-2)}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.peso{font-weight:700;color:var(--t-coral);font-variant-numeric:tabular-nums;white-space:nowrap;
-  border-radius:4px;padding:1px 2px}
+.peso{font-weight:700;color:var(--t-coral);font-variant-numeric:tabular-nums;white-space:nowrap;border-radius:5px;padding:0 2px}
 .peso.flash{animation:reprice var(--mid) ease-out}
 @keyframes reprice{0%{background:var(--sun);color:#3a2a00}100%{background:transparent;color:var(--t-coral)}}
-.counter{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--coral);text-decoration-thickness:1.5px}
 .free{font-weight:700;color:var(--t-palm)}
-.item{font-weight:500}
-.sub{display:block;font-size:.81rem;color:var(--ink-soft);font-weight:400;margin-top:3px;max-width:52ch}
-tr.total td{background:var(--surface-2);font-weight:700;border-top:2px solid var(--grape)}
+.strike{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--coral)}
 
-/* ---------- callouts ---------- */
-.note{border-left:5px solid var(--lagoon);background:var(--surface);padding:15px 18px;
-  border-radius:0 var(--r) var(--r) 0;margin:18px 0}
-.note.warn{border-left-color:var(--coral)}
-.note.save{border-left-color:var(--palm)}
-.note h3{margin-bottom:6px;color:var(--t-lagoon)}
-.note.warn h3{color:var(--t-coral)}
-.note.save h3{color:var(--t-palm)}
-.note p{margin:0;max-width:62ch;font-size:.95rem}
+/* ---------- selectable rows: INVERT when chosen ---------- */
+.picks{display:grid;gap:7px;margin:0 0 18px}
+.pick{display:flex;align-items:center;gap:13px;padding:12px 16px;min-height:54px;background:var(--surface);
+  border:2px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all var(--fast) ease}
+.pick:hover{border-color:var(--lagoon)}
+.pick input{width:20px;height:20px;accent-color:var(--grape);flex:none;cursor:pointer}
+.pick .nm{font-weight:600;font-size:.95rem;display:block}
+.pick .dt{font-size:.81rem;color:var(--ink-soft);display:none}
+.pick .pr{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:700;font-size:.93rem;
+  color:var(--t-coral);white-space:nowrap}
+.pick:has(input:checked){background:var(--grape);border-color:var(--grape);color:#fff}
+.pick:has(input:checked) input{accent-color:var(--sun)}
+.pick:has(input:checked) .pr{color:var(--sun)}
+.pick:has(input:checked) .dt{display:block;color:#e3cdf0}
+.pick:has(input:focus-visible){outline:3px solid var(--lagoon);outline-offset:2px}
 
-/* ---------- cards / stats ---------- */
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px}
-.grid2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-.stat{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--grape);
-  border-radius:var(--r);padding:15px 18px}
-.stat.hot{border-left-color:var(--coral)}
-.stat.sun{border-left-color:var(--sun)}
-.stat .k{font-size:.71rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);
-  font-family:var(--display);font-weight:800}
-.stat .v{font-family:var(--display);font-weight:800;font-size:1.65rem;font-variant-numeric:tabular-nums;
-  margin-top:3px;letter-spacing:-.02em;transition:color var(--fast) ease}
-.stat .v.bump{color:var(--t-lagoon)}
+/* ---------- stats ---------- */
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px 18px;
+  position:relative;overflow:hidden}
+.stat::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:var(--grape)}
+.stat.cor::before{background:var(--coral)} .stat.sun::before{background:var(--sun)}
+.stat.pal::before{background:var(--palm)} .stat.lag::before{background:var(--lagoon)}
+.stat .k{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:800}
+.stat .v{font-family:var(--display);font-weight:900;font-size:2rem;font-variant-numeric:tabular-nums;line-height:1;margin:5px 0 3px}
 .stat .s{font-size:.82rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
 
-/* ---------- calculator ---------- */
-.calc-controls{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));margin-bottom:22px}
+/* ---------- forms ---------- */
+.fields{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));margin-bottom:16px}
 .field{display:flex;flex-direction:column;gap:5px}
-.field label{font-size:.71rem;letter-spacing:.1em;text-transform:uppercase;font-family:var(--display);
-  font-weight:800;color:var(--ink-soft)}
-.field input,.field select{font:500 .95rem var(--body);padding:9px 10px;border:2px solid var(--line);
-  border-radius:8px;background:var(--surface-2);color:var(--ink);width:100%;font-variant-numeric:tabular-nums;
-  transition:border-color var(--fast) ease}
+.field label{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;font-weight:800;color:var(--ink-soft)}
+.field input,.field select{font:500 .95rem var(--body);padding:10px 12px;border:2px solid var(--line);
+  border-radius:99px;background:var(--surface-2);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
 .field input:hover,.field select:hover{border-color:var(--lagoon)}
-.picks{display:grid;gap:2px;margin:0 0 22px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.pick{display:flex;align-items:center;gap:13px;padding:12px 15px;min-height:52px;background:var(--surface);
-  cursor:pointer;transition:background var(--fast) ease}
-.pick:nth-child(even){background:var(--surface-2)}
-.pick:hover{background:#f2e8f7}
-.pick:has(input:checked){box-shadow:inset 4px 0 0 var(--lagoon)}
-.pick:has(input:focus-visible){outline:3px solid var(--ring);outline-offset:-3px}
-.pick input{width:20px;height:20px;accent-color:var(--grape);flex:none;cursor:pointer}
-.pick .txt{flex:1;min-width:0}
-.pick .nm{font-weight:600;font-size:.94rem;display:block}
-.pick .dt{font-size:.8rem;color:var(--ink-soft)}
-.pick .pr{font-variant-numeric:tabular-nums;font-weight:700;font-size:.92rem;color:var(--t-coral);
-  white-space:nowrap;text-align:right}
-.totals{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(152px,1fr))}
-.empty{padding:16px;border:2px dashed var(--line-strong);border-radius:var(--r);color:var(--ink-soft);
-  font-size:.92rem;margin-bottom:16px}
-.bar{height:11px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:16px}
+.btn{font:800 .92rem var(--display);letter-spacing:.02em;padding:10px 20px;border:2px solid var(--grape);
+  background:var(--grape);color:#fff;border-radius:99px;cursor:pointer;transition:all var(--fast) ease}
+.btn:hover{background:var(--coral);border-color:var(--coral)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line-strong)}
+.btn.ghost:hover{border-color:var(--coral);color:var(--t-coral);background:transparent}
+.btn.sm{padding:6px 14px;font-size:.84rem}
+.actionbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:12px}
+
+/* ---------- bars ---------- */
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:13px}
 .bar > i{display:block;height:100%;background:var(--palm);border-radius:99px;transition:width var(--mid) ease,background var(--fast) ease}
-.bar.near > i{background:var(--sun)}
-.bar.over > i{background:var(--coral)}
-.budget-line{font-size:.9rem;color:var(--ink-soft);margin-top:10px}
-.budget-line strong{color:var(--ink);font-variant-numeric:tabular-nums}
-.budget-line.over strong{color:var(--t-coral)}
+.bar.near > i{background:var(--sun)} .bar.over > i{background:var(--coral)}
 
 /* ---------- checklist ---------- */
-.prog-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:9px}
-.prog-count{font-family:var(--display);font-weight:800;font-size:.86rem;font-variant-numeric:tabular-nums;color:var(--t-grape)}
-.checks{display:grid;gap:2px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.chk{display:flex;gap:13px;align-items:center;padding:13px 15px;min-height:52px;background:var(--surface);
-  cursor:pointer;transition:background var(--fast) ease}
-.chk:nth-child(even){background:var(--surface-2)}
-.chk:hover{background:#f2e8f7}
-.chk:has(input:focus-visible){outline:3px solid var(--ring);outline-offset:-3px}
+.chk{display:flex;gap:13px;align-items:center;padding:12px 16px;min-height:54px;background:var(--surface);
+  border:2px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:all var(--fast) ease;margin-bottom:7px}
+.chk:hover{border-color:var(--lagoon)}
 .chk input{width:20px;height:20px;accent-color:var(--palm);flex:none;cursor:pointer}
-.chk .nm{font-weight:600;font-size:.94rem;display:block;transition:color var(--fast) ease}
-.chk .dt{font-size:.8rem;color:var(--ink-soft)}
-.chk.done{box-shadow:inset 4px 0 0 var(--palm)}
-.chk.done .nm{text-decoration:line-through;color:var(--ink-soft)}
-.done-all{background:var(--palm);color:#fff;border-radius:var(--r);padding:14px 18px;margin-top:14px;
-  font-weight:600;font-size:.95rem;display:none}
-.done-all.show{display:block;animation:pop var(--mid) ease-out}
-@keyframes pop{from{transform:scale(.97);opacity:0}to{transform:scale(1);opacity:1}}
-.actionbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
-.btn{font:700 .85rem var(--body);padding:9px 15px;border:2px solid var(--line-strong);background:var(--surface);
-  color:var(--ink);border-radius:8px;cursor:pointer;transition:border-color var(--fast) ease,color var(--fast) ease}
-.btn:hover{border-color:var(--coral);color:var(--t-coral)}
-.btn.undo{border-color:var(--lagoon);color:var(--t-lagoon)}
-.btn.undo:hover{background:var(--lagoon);color:#06241f;border-color:var(--lagoon)}
-.hint{font-size:.79rem;color:var(--ink-soft)}
+.chk .nm{font-weight:600;font-size:.94rem;display:block}
+.chk .dt{font-size:.8rem;color:var(--ink-soft);display:none}
+.chk:has(input:checked){background:var(--palm);border-color:var(--palm);color:#fff}
+.chk:has(input:checked) input{accent-color:var(--sun)}
+.chk:has(input:checked) .nm{text-decoration:line-through;opacity:.85}
+.chk:has(input:focus-visible){outline:3px solid var(--lagoon);outline-offset:2px}
 
-/* ---------- sources ---------- */
-.src{columns:2;column-gap:30px;font-size:.88rem}
-.src h3{margin:0 0 6px;color:var(--t-grape);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
-.src ul{margin:0 0 16px;padding-left:18px;break-inside:avoid}
-.src li{margin-bottom:4px}
-@media (max-width:600px){.src{columns:1}}
+/* ---------- map ---------- */
+.mapwrap{background:var(--sea);border-radius:var(--r);padding:8px;margin-bottom:14px;overflow:hidden}
+.mapwrap svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.legend span{font-size:.79rem;font-weight:600;background:var(--surface);border:1px solid var(--line);
+  padding:3px 11px;border-radius:99px}
 
-footer{border-top:3px solid var(--grape);padding-top:20px;color:var(--ink-soft);font-size:.86rem}
+/* ---------- itinerary ---------- */
+.stop{display:flex;gap:12px;align-items:center;background:var(--surface);border:2px solid var(--line);
+  border-radius:var(--r-sm);padding:11px 14px;margin-bottom:7px}
+.stop .time{font-family:var(--display);font-weight:900;font-size:1.3rem;font-variant-numeric:tabular-nums;
+  color:var(--t-grape);min-width:72px;line-height:1}
+.stop .meta{flex:1;min-width:0}
+.stop .nm{font-weight:600;font-size:.95rem}
+.stop .dt{font-size:.79rem;color:var(--ink-soft)}
+.stop .x{border:0;background:transparent;color:var(--ink-soft);font-size:1.3rem;cursor:pointer;padding:4px 8px;border-radius:99px}
+.stop .x:hover{color:var(--t-coral);background:var(--surface-2)}
+.travel{font-size:.78rem;color:var(--ink-soft);padding:2px 0 2px 84px;font-weight:600}
 
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
-}
+/* ---------- wallet ---------- */
+.spend{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:6px}
+.spend .lbl{flex:1;min-width:0;font-weight:500;font-size:.93rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spend .amt{font-variant-numeric:tabular-nums;font-weight:700;color:var(--t-coral);white-space:nowrap}
+
+/* ---------- docs ---------- */
+.vault{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.doc{border:2px solid var(--line);border-radius:var(--r-sm);overflow:hidden;background:var(--surface);position:relative}
+.doc img{display:block;width:100%;height:120px;object-fit:cover}
+.doc .cap{padding:7px 10px;font-size:.79rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc .x{position:absolute;top:6px;right:6px;border:0;background:rgba(31,10,42,.78);color:#fff;
+  width:26px;height:26px;border-radius:99px;cursor:pointer;font-size:.95rem;line-height:1}
+.drop{border:3px dashed var(--line-strong);border-radius:var(--r);padding:26px 18px;text-align:center;
+  color:var(--ink-soft);margin-bottom:14px}
+.warnbox{background:var(--coral);color:#fff;border-radius:var(--r-sm);padding:13px 17px;margin-bottom:14px;font-size:.9rem}
+.warnbox b{font-family:var(--display);font-size:1.05rem;letter-spacing:.02em}
+
+.src{font-size:.85rem;columns:2;column-gap:26px}
+.src h3{font-size:.95rem;color:var(--t-grape);margin:0 0 5px}
+.src ul{margin:0 0 14px;padding-left:17px;break-inside:avoid}
+@media (max-width:620px){.src{columns:1}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header class="mast">
-  <p class="kicker">Indonesia &middot; price reference</p>
-  <h1>Bali prices, in pesos</h1>
-  <div class="stripe">
-    <i style="background:#540D6E"></i><i style="background:#EE4266"></i><i style="background:#FFD23F"></i><i style="background:#3BCEAC"></i><i style="background:#0EAD69"></i>
-  </div>
-  <p class="lede">What things actually cost on the island — entrance fees, boats, drivers, water sports and food — in rupiah with the peso beside it. Set the rate once and the whole sheet re-prices.</p>
-</header>
-
-<div class="ratebar">
-  <span class="lab">Rate</span>
-  <span class="rate-field">
-    <label for="rate">Rp&nbsp;1,000 =</label>
-    <input id="rate" type="number" inputmode="decimal" step="0.05" min="1" max="10" value="3.51" aria-describedby="rate-note">
-    <span>&#8369;</span>
-  </span>
-  <span class="rate-eq">&#8369;1 = <span id="inv">285</span>&nbsp;IDR</span>
-  <span class="rate-note" id="rate-note">PHP/IDR has been quoting around <b>282&ndash;290</b>. Change this and every peso figure below updates.</span>
+<div class="mast">
+  <h1>Bali Trip&nbsp;Kit</h1>
+  <span class="who">Grand Hyatt · Nusa Dua</span>
+  <span class="when">Dec 3–12</span>
 </div>
 
-<section>
-  <div class="sec-head"><span class="sec-num">01</span><h2>Money, before anything else</h2></div>
-  <p>The rule of thumb: <strong>Rp 1,000 is about &#8369;3.50</strong>, so <strong>&#8369;100 buys roughly Rp 28,500</strong>. Rupiah notes carry a lot of zeros and Rp 50,000 looks like Rp 5,000 in dim light, so count twice at night markets.</p>
-  <div class="tw">
-    <table>
-      <thead><tr><th>Rupiah</th><th class="n">Peso</th><th>Buys you</th></tr></thead>
-      <tbody>
-        <tr><td class="n">Rp 10,000</td><td class="n"><span class="peso" data-idr="10000"></span></td><td>A couple of gorengan, or 2&nbsp;km in a Grab</td></tr>
-        <tr><td class="n">Rp 25,000</td><td class="n"><span class="peso" data-idr="25000"></span></td><td>Nasi goreng at a warung, or a waterfall ticket</td></tr>
-        <tr><td class="n">Rp 60,000</td><td class="n"><span class="peso" data-idr="60000"></span></td><td>Entry to Uluwatu Temple</td></tr>
-        <tr><td class="n">Rp 150,000</td><td class="n"><span class="peso" data-idr="150000"></span></td><td>The tourist levy, once per entry to Bali</td></tr>
-        <tr><td class="n">Rp 700,000</td><td class="n"><span class="peso" data-idr="700000"></span></td><td>A car and driver for a full day, whole vehicle</td></tr>
-        <tr><td class="n">Rp 1,000,000</td><td class="n"><span class="peso" data-idr="1000000"></span></td><td>Two people on a full Nusa Penida day trip</td></tr>
-      </tbody>
-    </table>
+<div class="ratebar" id="ratebar">
+  <label for="rate">Rp 1,000 =</label>
+  <input id="rate" type="number" inputmode="decimal" step="0.05" min="1" max="10" value="3.51">
+  <span class="rate-eq">₱1 = <span id="inv">285</span> IDR</span>
+</div>
+
+<div class="tabs" role="tablist">
+  <button class="tab" role="tab" data-panel="p-map" aria-selected="true">Map</button>
+  <button class="tab" role="tab" data-panel="p-time" aria-selected="false">Day planner</button>
+  <button class="tab" role="tab" data-panel="p-prices" aria-selected="false">Prices</button>
+  <button class="tab" role="tab" data-panel="p-places" aria-selected="false">Places</button>
+  <button class="tab" role="tab" data-panel="p-money" aria-selected="false">Wallet</button>
+  <button class="tab" role="tab" data-panel="p-pack" aria-selected="false">Packing</button>
+  <button class="tab" role="tab" data-panel="p-docs" aria-selected="false">Docs</button>
+</div>
+
+<!-- ===================== MAP ===================== -->
+<section class="panel" id="p-map">
+  <div class="mapwrap">
+    <svg viewBox="0 0 800 580" role="img" aria-label="Hand-drawn map of south Bali with drive times from Nusa Dua">
+      <defs>
+        <linearGradient id="land" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3BCEAC" stop-opacity=".30"/>
+          <stop offset="100%" stop-color="#0EAD69" stop-opacity=".42"/>
+        </linearGradient>
+      </defs>
+
+      <!-- mainland -->
+      <path d="M150 118 C178 44 302 28 404 50 C486 68 534 104 522 156 C512 200 500 230 478 262
+               C452 300 408 306 378 320 L352 330 C318 320 288 300 262 270 C226 228 184 188 150 118 Z"
+            fill="url(#land)" stroke="#540D6E" stroke-width="3" stroke-linejoin="round"/>
+      <!-- bukit peninsula -->
+      <path d="M352 330 C300 336 248 358 214 394 C178 432 186 478 228 498 C284 522 364 516 424 486
+               C470 462 484 422 468 392 C450 356 402 332 352 330 Z"
+            fill="url(#land)" stroke="#540D6E" stroke-width="3" stroke-linejoin="round"/>
+      <!-- nusa penida -->
+      <path d="M626 418 C666 400 716 412 726 442 C734 470 700 488 660 482 C624 476 610 446 626 418 Z"
+            fill="url(#land)" stroke="#540D6E" stroke-width="3" stroke-linejoin="round"/>
+
+      <!-- routes from base -->
+      <g fill="none" stroke="#540D6E" stroke-width="2.4" stroke-dasharray="7 7" opacity=".55">
+        <path d="M424 428 Q 330 478 238 444"/>
+        <path d="M424 428 Q 384 396 338 364"/>
+        <path d="M424 428 Q 404 340 318 272"/>
+        <path d="M424 428 Q 466 330 470 236"/>
+        <path d="M424 428 Q 514 262 438 100"/>
+      </g>
+      <path d="M424 428 Q 556 480 648 452" fill="none" stroke="#3BCEAC" stroke-width="3.4" stroke-dasharray="3 9" stroke-linecap="round"/>
+
+      <!-- drive-time labels -->
+      <g font-family="Figtree,sans-serif" font-size="15" font-weight="700" fill="#540D6E">
+        <text x="300" y="486" text-anchor="middle">35 min</text>
+        <text x="372" y="404" text-anchor="middle">25 min</text>
+        <text x="372" y="312" text-anchor="middle">35 min</text>
+        <text x="486" y="330" text-anchor="middle">30 min</text>
+        <text x="516" y="214" text-anchor="middle">1h30</text>
+        <text x="566" y="498" text-anchor="middle" fill="#0F6657">boat 30–45</text>
+      </g>
+
+      <!-- pins -->
+      <g font-family="Figtree,sans-serif" font-weight="700" font-size="16" fill="#1f0a2a">
+        <circle cx="424" cy="428" r="15" fill="#EE4266" stroke="#fff" stroke-width="4"/>
+        <circle cx="424" cy="428" r="27" fill="none" stroke="#EE4266" stroke-width="2.4" opacity=".55"/>
+        <text x="424" y="478" text-anchor="middle" font-size="17" fill="#BE1A40">Grand Hyatt</text>
+
+        <circle cx="238" cy="444" r="10" fill="#540D6E" stroke="#fff" stroke-width="3"/>
+        <text x="238" y="472" text-anchor="middle">Uluwatu</text>
+
+        <circle cx="338" cy="364" r="10" fill="#540D6E" stroke="#fff" stroke-width="3"/>
+        <text x="330" y="350" text-anchor="middle">Jimbaran</text>
+
+        <circle cx="318" cy="272" r="10" fill="#540D6E" stroke="#fff" stroke-width="3"/>
+        <text x="296" y="262" text-anchor="end">Kuta</text>
+
+        <circle cx="284" cy="212" r="10" fill="#540D6E" stroke="#fff" stroke-width="3"/>
+        <text x="262" y="206" text-anchor="end">Seminyak</text>
+
+        <circle cx="470" cy="236" r="10" fill="#540D6E" stroke="#fff" stroke-width="3"/>
+        <text x="492" y="232">Sanur</text>
+
+        <circle cx="438" cy="100" r="10" fill="#540D6E" stroke="#fff" stroke-width="3"/>
+        <text x="458" y="96">Ubud</text>
+
+        <circle cx="332" cy="304" r="7" fill="#FFD23F" stroke="#540D6E" stroke-width="2.4"/>
+        <text x="312" y="310" text-anchor="end" font-size="14" fill="#64506f">Airport</text>
+
+        <circle cx="676" cy="446" r="10" fill="#0EAD69" stroke="#fff" stroke-width="3"/>
+        <text x="676" y="506" text-anchor="middle" fill="#07703C">Nusa Penida</text>
+      </g>
+    </svg>
   </div>
-  <div class="note">
-    <h3>Three habits that save real money</h3>
-    <p>Change money at an authorised changer in Bali, not at your departure airport. Carry cash — warungs, ticket booths, beach gates and parking attendants rarely take cards. And book activities online rather than at the counter, which is covered in section&nbsp;06.</p>
+  <div class="legend">
+    <span>🔴 Base</span><span>🟣 Day trip</span><span>🟢 By boat</span><span>Times are one way, light traffic</span>
   </div>
+
+  <div class="row" style="margin-top:14px">
+    <div class="stat cor"><div class="k">Closest</div><div class="v">10 min</div><div class="s">Tanjung Benoa water sports</div></div>
+    <div class="stat sun"><div class="k">Furthest by road</div><div class="v">1h30</div><div class="s">Ubud — 2h30 in traffic</div></div>
+    <div class="stat lag"><div class="k">Sunset rule</div><div class="v">+20 min</div><div class="s">Uluwatu roads clog before sunset</div></div>
+  </div>
+
+  <details>
+    <summary>Why Nusa Dua is the right base in December</summary>
+    <div class="d-body">
+      <p class="small">Most Bali beaches get murky water and washed-up debris in the wet season. Nusa Dua keeps clear water and is the island's go-to rainy-season beach. Everything on the Bukit peninsula is inside 40 minutes; Ubud and Canggu are the only long hauls.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Free, and walkable from the hotel</summary>
+    <div class="d-body">
+      <p class="small"><strong>Water Blow</strong> on Peninsula Island — waves funnel through a cliff gap and shoot up to 30 m. Free, parking only, best at mid-to-high tide.<br>
+      <strong>Nusa Dua Promenade</strong> — paved 7 km coastal walkway.<br>
+      <strong>Pantai Mengiat and Geger</strong> — public beaches despite the resorts.<br>
+      <strong>Puja Mandala</strong> — five houses of worship side by side, 10 minutes away.</p>
+    </div>
+  </details>
 </section>
 
-<section>
-  <div class="sec-head"><span class="sec-num">02</span><h2>Temples, terraces and sites</h2></div>
-  <p>Foreign-visitor adult rates. Several sites charge Indonesians less, and fees are adjusted without much notice — treat these as planning numbers.</p>
-  <div class="tw">
-    <table>
-      <thead><tr><th>Site</th><th class="n">Rupiah</th><th class="n">Peso</th></tr></thead>
-      <tbody>
-        <tr><td class="item">Uluwatu Temple<span class="sub">Clifftop, best late afternoon. Watch your sunglasses — the macaques are practised thieves</span></td><td class="n">60,000</td><td class="n"><span class="peso" data-idr="60000"></span></td></tr>
-        <tr><td class="item">Uluwatu Kecak fire dance<span class="sub">Temple entry charged separately. Online beats walk-up</span></td><td class="n">80,000&ndash;150,000</td><td class="n"><span class="peso" data-idr="80000" data-idr-max="150000"></span></td></tr>
-        <tr><td class="item">Tanah Lot<span class="sub">Sea temple, sunset</span></td><td class="n">60,000&ndash;75,000</td><td class="n"><span class="peso" data-idr="60000" data-idr-max="75000"></span></td></tr>
-        <tr><td class="item">Tirta Empul<span class="sub">Holy spring. The melukat purification ritual costs extra and is the reason to go</span></td><td class="n">75,000</td><td class="n"><span class="peso" data-idr="75000"></span></td></tr>
-        <tr><td class="item">Besakih<span class="sub">Bali's largest complex; includes a local guide, sarong and one-way shuttle</span></td><td class="n">150,000</td><td class="n"><span class="peso" data-idr="150000"></span></td></tr>
-        <tr><td class="item">Lempuyang<span class="sub">The "Gates of Heaven" queue. Shuttle another 45,000&ndash;50,000</span></td><td class="n">55,000&ndash;100,000</td><td class="n"><span class="peso" data-idr="55000" data-idr-max="100000"></span></td></tr>
-        <tr><td class="item">Tirta Gangga<span class="sub">Water palace, east Bali</span></td><td class="n">90,000</td><td class="n"><span class="peso" data-idr="90000"></span></td></tr>
-        <tr><td class="item">Taman Ujung Water Palace</td><td class="n">100,000</td><td class="n"><span class="peso" data-idr="100000"></span></td></tr>
-        <tr><td class="item">Jatiluwih rice terraces<span class="sub">The UNESCO ones, far quieter than Tegalalang</span></td><td class="n">75,000</td><td class="n"><span class="peso" data-idr="75000"></span></td></tr>
-        <tr><td class="item">Tegalalang rice terrace<span class="sub">Swings and photo platforms cost extra on top</span></td><td class="n">25,000&ndash;50,000</td><td class="n"><span class="peso" data-idr="25000" data-idr-max="50000"></span></td></tr>
-        <tr><td class="item">Gunung Kawi<span class="sub">Rock-cut shrines, Tampaksiring</span></td><td class="n">75,000</td><td class="n"><span class="peso" data-idr="75000"></span></td></tr>
-        <tr><td class="item">Monkey Forest, Ubud<span class="sub">Sources quote both ends; confirm at the gate</span></td><td class="n">80,000&ndash;130,000</td><td class="n"><span class="peso" data-idr="80000" data-idr-max="130000"></span></td></tr>
-        <tr><td class="item">Penglipuran village</td><td class="n">50,000</td><td class="n"><span class="peso" data-idr="50000"></span></td></tr>
-        <tr><td class="item">Garuda Wisnu Kencana (GWK)<span class="sub">The dearest ticket in the south for the least to do</span></td><td class="n">150,000</td><td class="n"><span class="peso" data-idr="150000"></span></td></tr>
-        <tr><td class="item">Goa Lawah<span class="sub">Bat cave temple</span></td><td class="n">30,000</td><td class="n"><span class="peso" data-idr="30000"></span></td></tr>
-        <tr><td class="item">Kerta Gosa<span class="sub">Painted ceilings, Klungkung</span></td><td class="n">20,000</td><td class="n"><span class="peso" data-idr="20000"></span></td></tr>
-        <tr><td class="item">Ubud Art Market</td><td class="n">&mdash;</td><td class="n"><span class="free">Free</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="note warn">
-    <h3>Dress code</h3>
-    <p>Knees and shoulders covered at every temple. A sarong is lent at the gate and is normally included in the ticket, so there is no need to buy one.</p>
-  </div>
-</section>
-
-<section>
-  <div class="sec-head"><span class="sec-num">03</span><h2>Waterfalls and hot springs</h2></div>
-  <p>Wet-season visitors get the one real consolation: these run at their fullest from roughly November to March. Wet steps and mud are the trade, so bring shoes with grip.</p>
-  <div class="tw">
-    <table>
-      <thead><tr><th>Place</th><th class="n">Rupiah</th><th class="n">Peso</th></tr></thead>
-      <tbody>
-        <tr><td class="item">Tibumana<span class="sub">The cheap one, and the prettiest of the easy ones</span></td><td class="n">25,000</td><td class="n"><span class="peso" data-idr="25000"></span></td></tr>
-        <tr><td class="item">Tegenungan<span class="sub">The easy one — closest to Ubud, busiest</span></td><td class="n">30,000</td><td class="n"><span class="peso" data-idr="30000"></span></td></tr>
-        <tr><td class="item">Aling-Aling, north Bali<span class="sub">Viewing only; a guide for the jumps and slides is 125,000</span></td><td class="n">20,000</td><td class="n"><span class="peso" data-idr="20000"></span></td></tr>
-        <tr><td class="item">Taman Beji Griya<span class="sub">Includes a purification ritual</span></td><td class="n">200,000</td><td class="n"><span class="peso" data-idr="200000"></span></td></tr>
-        <tr><td class="item">Angseri hot springs</td><td class="n">45,000&ndash;150,000</td><td class="n"><span class="peso" data-idr="45000" data-idr-max="150000"></span></td></tr>
-        <tr><td class="item">Batur natural hot spring</td><td class="n">180,000</td><td class="n"><span class="peso" data-idr="180000"></span></td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<section>
-  <div class="sec-head"><span class="sec-num">04</span><h2>Beaches: mostly free</h2></div>
-  <p>Almost every beach in Bali is free to walk onto. Where there is a fee it is small, and parking is the only charge at most of the Bukit peninsula breaks.</p>
-  <div class="tw">
-    <table>
-      <thead><tr><th>Beach</th><th class="n">Entry</th><th class="n">Peso</th><th>Parking</th></tr></thead>
-      <tbody>
-        <tr><td class="item">Pandawa<span class="sub">Cliff-cut road down to calm water</span></td><td class="n">25,000</td><td class="n"><span class="peso" data-idr="25000"></span></td><td>Minimal</td></tr>
-        <tr><td class="item">Melasti, Ungasan</td><td class="n">10,000&ndash;20,000</td><td class="n"><span class="peso" data-idr="10000" data-idr-max="20000"></span></td><td>By the sand</td></tr>
-        <tr><td class="item">Balangan</td><td class="n">&mdash;</td><td class="n"><span class="free">Free</span></td><td>Rp 5&ndash;15k</td></tr>
-        <tr><td class="item">Bingin</td><td class="n">&mdash;</td><td class="n"><span class="free">Free</span></td><td>Rp 5&ndash;10k</td></tr>
-        <tr><td class="item">Dreamland</td><td class="n">&mdash;</td><td class="n"><span class="free">Free</span></td><td>Rp 5&ndash;20k</td></tr>
-        <tr><td class="item">Jimbaran<span class="sub">Seafood grills set out on the sand at sunset</span></td><td class="n">&mdash;</td><td class="n"><span class="free">Free</span></td><td>Rp 2&ndash;5k</td></tr>
-        <tr><td class="item">Nusa Dua, Mengiat, Geger<span class="sub">Resort-lined but public; no room booking needed</span></td><td class="n">&mdash;</td><td class="n"><span class="free">Free</span></td><td>Yes</td></tr>
-        <tr><td class="item">Nusa Dua Water Blow<span class="sub">Waves funnel through a cliff gap and shoot up to 30&nbsp;m. Go at mid-to-high tide</span></td><td class="n">&mdash;</td><td class="n"><span class="free">Free</span></td><td>Only</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="note">
-    <h3>Wet-season tip</h3>
-    <p>West-coast sand at Kuta, Seminyak and Canggu collects washed-up debris and murky water from about November to March. The east and south-east — Nusa Dua, Sanur — stay clear, which is why they are the rainy-season pick.</p>
-  </div>
-</section>
-
-<section>
-  <div class="sec-head"><span class="sec-num">05</span><h2>Nusa Penida</h2></div>
-  <p>A day trip from Sanur: 30&ndash;45 minutes by fast boat, then a driver for the west-coast run — Kelingking, Broken Beach, Angel's Billabong, Crystal Bay.</p>
-  <div class="tw">
-    <table>
-      <thead><tr><th>Item</th><th class="n">Rupiah</th><th class="n">Peso</th></tr></thead>
-      <tbody>
-        <tr><td class="item">Fast boat from Sanur, one way<span class="sub">Budget operators at the low end, mid-range at the high</span></td><td class="n">100,000&ndash;200,000</td><td class="n"><span class="peso" data-idr="100000" data-idr-max="200000"></span></td></tr>
-        <tr><td class="item">Fast boat, return</td><td class="n">300,000&ndash;500,000</td><td class="n"><span class="peso" data-idr="300000" data-idr-max="500000"></span></td></tr>
-        <tr><td class="item">Island driver-guide, full day<span class="sub">Per car, not per person — split it</span></td><td class="n">250,000&ndash;750,000</td><td class="n"><span class="peso" data-idr="250000" data-idr-max="750000"></span></td></tr>
-        <tr><td class="item">Scooter on Penida, per day<span class="sub">Roads are rough and steep; not for nervous riders</span></td><td class="n">75,000&ndash;100,000</td><td class="n"><span class="peso" data-idr="75000" data-idr-max="100000"></span></td></tr>
-        <tr><td class="item">Site and parking fees</td><td class="n">30,000&ndash;50,000</td><td class="n"><span class="peso" data-idr="30000" data-idr-max="50000"></span></td></tr>
-        <tr class="total"><td>A realistic DIY day</td><td class="n">580,000&ndash;1,000,000</td><td class="n"><span class="peso" data-idr="580000" data-idr-max="1000000"></span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="note save">
-    <h3>Book the boat direct</h3>
-    <p>Packages arranged through a hotel typically run two to three times the direct price. Buy from the operator, and compare two or three: quoted 2026 fares run from Rp 100,000 to Rp 195,000 one way for the same crossing.</p>
-  </div>
-  <div class="note warn">
-    <h3>Rainy season, read this</h3>
-    <p>Rough seas cancel crossings with little notice between November and March. Never put Penida on your last day — leave a spare day to try again — and expect the Kelingking descent to be harder on wet steps.</p>
-  </div>
-</section>
-
-<section>
-  <div class="sec-head"><span class="sec-num">06</span><h2>Water sports: the online gap</h2></div>
-  <p>Tanjung Benoa, next to Nusa Dua, is the main watersports strip. The same ride costs wildly different amounts depending on where you buy it, and this is the largest avoidable overpay on the island.</p>
-  <div class="tw">
-    <table>
-      <thead><tr><th>Activity</th><th class="n">Online</th><th class="n">Peso</th><th class="n">At the counter</th></tr></thead>
-      <tbody>
-        <tr><td class="item">Banana boat, 15 min</td><td class="n">80,000</td><td class="n"><span class="peso" data-idr="80000"></span></td><td class="n"><span class="counter">300,000</span></td></tr>
-        <tr><td class="item">Rolling donut, 15 min</td><td class="n">125,000</td><td class="n"><span class="peso" data-idr="125000"></span></td><td class="n">&mdash;</td></tr>
-        <tr><td class="item">Snorkelling</td><td class="n">150,000</td><td class="n"><span class="peso" data-idr="150000"></span></td><td class="n">&mdash;</td></tr>
-        <tr><td class="item">Jet ski, 15 min</td><td class="n">185,000</td><td class="n"><span class="peso" data-idr="185000"></span></td><td class="n">&mdash;</td></tr>
-        <tr><td class="item">Parasailing, tandem</td><td class="n">250,000</td><td class="n"><span class="peso" data-idr="250000"></span></td><td class="n"><span class="counter">800,000</span></td></tr>
-        <tr><td class="item">Sea walker, 30 min</td><td class="n">325,000</td><td class="n"><span class="peso" data-idr="325000"></span></td><td class="n"><span class="counter">1,000,000</span></td></tr>
-        <tr><td class="item">Intro scuba dive, 30 min</td><td class="n">325,000</td><td class="n"><span class="peso" data-idr="325000"></span></td><td class="n"><span class="counter">1,000,000</span></td></tr>
-        <tr><td class="item">Wakeboarding</td><td class="n">350,000</td><td class="n"><span class="peso" data-idr="350000"></span></td><td class="n"><span class="counter">700,000</span></td></tr>
-        <tr><td class="item">Flyboard</td><td class="n">450,000</td><td class="n"><span class="peso" data-idr="450000"></span></td><td class="n"><span class="counter">1,000,000</span></td></tr>
-        <tr><td class="item">Turtle Island, glass-bottom boat<span class="sub">Per boat, not per person</span></td><td class="n">500,000</td><td class="n"><span class="peso" data-idr="500000"></span></td><td class="n"><span class="counter">700,000</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="note save">
-    <h3>A banana boat is &#8369;<span id="bb-gap">0</span> cheaper booked ahead</h3>
-    <p>Rp 80,000 online against Rp 300,000 at the counter is about 73% off the identical fifteen minutes. Message an operator on WhatsApp and get the rate confirmed in writing before you turn up.</p>
-  </div>
-  <p><strong>Buy rides singly, not in combos.</strong> A banana boat plus parasailing comes to Rp 330,000 (<span class="peso" data-idr="330000"></span>). The three-ride packages start at Rp 435,000&ndash;495,000 and bundle in a jet ski you may not want. Also confirm the weather policy: good operators reschedule or refund parasailing when conditions are unsafe.</p>
-</section>
-
-<section>
-  <div class="sec-head"><span class="sec-num">07</span><h2>Food</h2></div>
-  <p>Food is where Bali stays genuinely cheap, and where the spread between choices is widest. A warung plate runs a tenth of a tourist-strip dinner.</p>
-  <div class="tw">
-    <table>
-      <thead><tr><th>Meal</th><th class="n">Rupiah</th><th class="n">Peso</th></tr></thead>
-      <tbody>
-        <tr><td class="item">Gorengan, street snack</td><td class="n">5,000&ndash;10,000</td><td class="n"><span class="peso" data-idr="5000" data-idr-max="10000"></span></td></tr>
-        <tr><td class="item">Nasi goreng or mie goreng, warung</td><td class="n">15,000&ndash;25,000</td><td class="n"><span class="peso" data-idr="15000" data-idr-max="25000"></span></td></tr>
-        <tr><td class="item">Fresh tropical juice</td><td class="n">15,000&ndash;25,000</td><td class="n"><span class="peso" data-idr="15000" data-idr-max="25000"></span></td></tr>
-        <tr><td class="item">Nasi campur, warung<span class="sub">Rice with six to eight small dishes; the everyday plate</span></td><td class="n">20,000&ndash;35,000</td><td class="n"><span class="peso" data-idr="20000" data-idr-max="35000"></span></td></tr>
-        <tr><td class="item">Babi guling<span class="sub">Suckling pig, a Balinese speciality</span></td><td class="n">50,000&ndash;80,000</td><td class="n"><span class="peso" data-idr="50000" data-idr-max="80000"></span></td></tr>
-        <tr><td class="item">Caf&eacute; main dish</td><td class="n">70,000&ndash;180,000</td><td class="n"><span class="peso" data-idr="70000" data-idr-max="180000"></span></td></tr>
-        <tr><td class="item">Casual restaurant dinner</td><td class="n">200,000&ndash;400,000</td><td class="n"><span class="peso" data-idr="200000" data-idr-max="400000"></span></td></tr>
-        <tr class="total"><td>Three warung meals a day</td><td class="n">under 100,000</td><td class="n"><span class="peso" data-idr="100000"></span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p>Warungs are cash only. Resort enclaves like Nusa Dua have few of them — walk out to the neighbouring village, or eat on your Ubud and Bukit days. Drink bottled or filtered water, and skip ice away from the main strips.</p>
-</section>
-
-<section>
-  <div class="sec-head"><span class="sec-num">08</span><h2>Getting around</h2></div>
-  <p>Cars and drivers are priced <strong>per vehicle, not per passenger</strong>, which is what makes a group cheap to move. A full day means 10&ndash;12 hours and normally includes fuel, parking and the driver.</p>
-  <div class="tw">
-    <table>
-      <thead><tr><th>Option</th><th class="n">Rupiah</th><th class="n">Peso</th></tr></thead>
-      <tbody>
-        <tr><td class="item">Grab or Gojek, per km</td><td class="n">5,000&ndash;8,000</td><td class="n"><span class="peso" data-idr="5000" data-idr-max="8000"></span></td></tr>
-        <tr><td class="item">Scooter rental, per day<span class="sub">The cheapest door-to-door transport on the island</span></td><td class="n">70,000&ndash;150,000</td><td class="n"><span class="peso" data-idr="70000" data-idr-max="150000"></span></td></tr>
-        <tr><td class="item">Car and driver, half day (4&ndash;5 hrs)</td><td class="n">350,000&ndash;500,000</td><td class="n"><span class="peso" data-idr="350000" data-idr-max="500000"></span></td></tr>
-        <tr><td class="item">Car and driver, full day<span class="sub">Avanza, APV, Xenia — up to 7 seats</span></td><td class="n">550,000&ndash;800,000</td><td class="n"><span class="peso" data-idr="550000" data-idr-max="800000"></span></td></tr>
-        <tr><td class="item">Mid-size MPV, full day<span class="sub">Innova, Xpander</span></td><td class="n">950,000&ndash;1,400,000</td><td class="n"><span class="peso" data-idr="950000" data-idr-max="1400000"></span></td></tr>
-        <tr><td class="item">Toyota HiAce, full day<span class="sub">7&ndash;15 people in one vehicle</span></td><td class="n">1,500,000&ndash;2,300,000</td><td class="n"><span class="peso" data-idr="1500000" data-idr-max="2300000"></span></td></tr>
-        <tr><td class="item">Overtime, per extra hour<span class="sub">Agree this before you book</span></td><td class="n">100,000&ndash;150,000</td><td class="n"><span class="peso" data-idr="100000" data-idr-max="150000"></span></td></tr>
-        <tr><td class="item">Pickup before 06:00, surcharge</td><td class="n">100,000</td><td class="n"><span class="peso" data-idr="100000"></span></td></tr>
-        <tr><td class="item">Driver's overnight accommodation<span class="sub">Multi-day trips out of town</span></td><td class="n">300,000</td><td class="n"><span class="peso" data-idr="300000"></span></td></tr>
-        <tr><td class="item">Driver tip, per day<span class="sub">Per driver, not per passenger</span></td><td class="n">50,000&ndash;100,000</td><td class="n"><span class="peso" data-idr="50000" data-idr-max="100000"></span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p>Arrange a driver on WhatsApp before you arrive rather than at a hotel desk, send photos of your luggage so the vehicle is big enough, and get the quote in writing. Some villages are closed to ride-hailing pickups, so a chartered car avoids being stranded.</p>
-</section>
-
-<section>
-  <div class="sec-head"><span class="sec-num">09</span><h2>The tourist levy</h2></div>
-  <div class="grid2" style="margin-bottom:18px">
-    <div class="stat sun"><div class="k">Per person</div><div class="v">Rp 150,000</div><div class="s"><span class="peso" data-idr="150000"></span> &middot; once per entry</div></div>
-    <div class="stat hot"><div class="k">Who pays</div><div class="v">Everyone</div><div class="s">Including children and infants</div></div>
-  </div>
-  <p>Every foreign visitor pays a one-time levy of Rp 150,000 on entry to Bali, separate from any visa requirement. Pay it on the official <strong>Love Bali</strong> portal before you fly and keep the QR voucher on your phone. Visitors who have not paid can be refused entry.</p>
-  <div class="note warn">
-    <h3>Levy scams are still running</h3>
-    <p>Pay only through the official portal. Never scan a QR code handed to you by someone at the airport or at a checkpoint, and keep your own voucher as proof. Children on a foreign passport pay the full amount — there is no age discount.</p>
-  </div>
-  <p>Visa rules depend on your passport, so check what yours needs before booking. The levy is charged on top of whatever that is.</p>
-</section>
-
-<section>
-  <div class="sec-head"><span class="sec-num">10</span><h2>Work out your trip</h2></div>
-  <p>Everything below is priced from the tables above. Set your headcount and days, tick what you plan to do, and the total converts at the rate in the bar.</p>
+<!-- ===================== DAY PLANNER ===================== -->
+<section class="panel" id="p-time" hidden>
+  <span class="pill lag">Day planner</span>
+  <p class="lead">Pick a start time and stack your stops. Travel time, time at each place and Bali's traffic are all counted, so you can see when you'd actually get back.</p>
 
   <div class="card">
-    <div class="calc-controls">
-      <div class="field"><label for="heads">People</label><input id="heads" type="number" min="1" max="40" value="2"></div>
-      <div class="field"><label for="days">Days on the island</label><input id="days" type="number" min="1" max="60" value="7"></div>
+    <div class="fields">
+      <div class="field"><label for="start">Leave the hotel</label><input id="start" type="time" value="08:00"></div>
       <div class="field">
-        <label for="food">Eating style</label>
-        <select id="food">
-          <option value="90000">Warungs — Rp 90k/day</option>
-          <option value="200000" selected>Mixed — Rp 200k/day</option>
-          <option value="450000">Restaurants — Rp 450k/day</option>
+        <label for="traffic">Traffic</label>
+        <select id="traffic">
+          <option value="1">Light — early morning</option>
+          <option value="1.35" selected>Normal</option>
+          <option value="1.75">Heavy — afternoon, sunset, rain</option>
         </select>
       </div>
       <div class="field">
-        <label for="transport">Transport</label>
+        <label for="addstop">Add a stop</label>
+        <select id="addstop"></select>
+      </div>
+      <div class="field" style="justify-content:flex-end"><button class="btn" id="add-btn" type="button">Add to the day</button></div>
+    </div>
+
+    <div id="itin"></div>
+
+    <div class="row" style="margin-top:14px">
+      <div class="stat lag"><div class="k">Back at the hotel</div><div class="v" id="t-end">—</div><div class="s" id="t-endnote">Add a stop to start</div></div>
+      <div class="stat sun"><div class="k">On the road</div><div class="v" id="t-road">0h</div><div class="s">Total driving, both ways</div></div>
+      <div class="stat pal"><div class="k">Actually there</div><div class="v" id="t-see">0h</div><div class="s">Time at the places themselves</div></div>
+    </div>
+    <div class="actionbar"><button class="btn ghost sm" id="clear-itin" type="button">Clear the day</button>
+      <span class="small muted">Drive times are estimates from Nusa Dua; hops inside the same area assume 20 min.</span></div>
+  </div>
+
+  <details>
+    <summary>How bad is Bali traffic, really</summary>
+    <div class="d-body">
+      <p class="small">Bad enough to wreck a plan. Nusa Dua to Ubud is 45 km and takes 1.5–2 hours, up to 2.5 in traffic. Canggu is 38 km and can take 2.5 hours. Uluwatu's narrow roads clog before sunset — a 20-minute hop can stretch to 40 or 50. Leave early, and never schedule two far-apart places in one day.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ===================== PRICES ===================== -->
+<section class="panel" id="p-prices" hidden>
+  <span class="pill">Prices</span>
+  <p class="lead">Foreign-visitor rates. Tap a category to open it. Everything converts at the rate in the bar above.</p>
+
+  <details open>
+    <summary>Temples and sites <span class="tag">17</span></summary>
+    <div class="d-body"><div class="tw"><table>
+      <thead><tr><th>Site</th><th class="n">Rupiah</th><th class="n">Peso</th></tr></thead>
+      <tbody>
+        <tr><td>Uluwatu Temple</td><td class="n">60,000</td><td class="n"><span class="peso" data-idr="60000"></span></td></tr>
+        <tr><td>Uluwatu Kecak dance</td><td class="n">80,000–150,000</td><td class="n"><span class="peso" data-idr="80000" data-idr-max="150000"></span></td></tr>
+        <tr><td>Tanah Lot</td><td class="n">60,000–75,000</td><td class="n"><span class="peso" data-idr="60000" data-idr-max="75000"></span></td></tr>
+        <tr><td>Tirta Empul</td><td class="n">75,000</td><td class="n"><span class="peso" data-idr="75000"></span></td></tr>
+        <tr><td>Besakih</td><td class="n">150,000</td><td class="n"><span class="peso" data-idr="150000"></span></td></tr>
+        <tr><td>Lempuyang</td><td class="n">55,000–100,000</td><td class="n"><span class="peso" data-idr="55000" data-idr-max="100000"></span></td></tr>
+        <tr><td>Tirta Gangga</td><td class="n">90,000</td><td class="n"><span class="peso" data-idr="90000"></span></td></tr>
+        <tr><td>Taman Ujung</td><td class="n">100,000</td><td class="n"><span class="peso" data-idr="100000"></span></td></tr>
+        <tr><td>Jatiluwih terraces</td><td class="n">75,000</td><td class="n"><span class="peso" data-idr="75000"></span></td></tr>
+        <tr><td>Tegalalang terrace</td><td class="n">25,000–50,000</td><td class="n"><span class="peso" data-idr="25000" data-idr-max="50000"></span></td></tr>
+        <tr><td>Gunung Kawi</td><td class="n">75,000</td><td class="n"><span class="peso" data-idr="75000"></span></td></tr>
+        <tr><td>Monkey Forest</td><td class="n">80,000–130,000</td><td class="n"><span class="peso" data-idr="80000" data-idr-max="130000"></span></td></tr>
+        <tr><td>Penglipuran village</td><td class="n">50,000</td><td class="n"><span class="peso" data-idr="50000"></span></td></tr>
+        <tr><td>GWK</td><td class="n">150,000</td><td class="n"><span class="peso" data-idr="150000"></span></td></tr>
+        <tr><td>Goa Lawah</td><td class="n">30,000</td><td class="n"><span class="peso" data-idr="30000"></span></td></tr>
+        <tr><td>Kerta Gosa</td><td class="n">20,000</td><td class="n"><span class="peso" data-idr="20000"></span></td></tr>
+        <tr><td>Ubud Art Market</td><td class="n">—</td><td class="n"><span class="free">Free</span></td></tr>
+      </tbody></table></div>
+      <p class="small muted" style="margin-top:9px">Knees and shoulders covered. Sarongs are lent at the gate, included in the ticket.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Beaches and waterfalls <span class="tag">mostly free</span></summary>
+    <div class="d-body"><div class="tw"><table>
+      <thead><tr><th>Place</th><th class="n">Rupiah</th><th class="n">Peso</th></tr></thead>
+      <tbody>
+        <tr><td>Pandawa</td><td class="n">25,000</td><td class="n"><span class="peso" data-idr="25000"></span></td></tr>
+        <tr><td>Melasti</td><td class="n">10,000–20,000</td><td class="n"><span class="peso" data-idr="10000" data-idr-max="20000"></span></td></tr>
+        <tr><td>Balangan, Bingin, Dreamland</td><td class="n">parking only</td><td class="n"><span class="free">Free</span></td></tr>
+        <tr><td>Jimbaran, Mengiat, Geger</td><td class="n">—</td><td class="n"><span class="free">Free</span></td></tr>
+        <tr><td>Nusa Dua Water Blow</td><td class="n">—</td><td class="n"><span class="free">Free</span></td></tr>
+        <tr><td>Tibumana waterfall</td><td class="n">25,000</td><td class="n"><span class="peso" data-idr="25000"></span></td></tr>
+        <tr><td>Tegenungan waterfall</td><td class="n">30,000</td><td class="n"><span class="peso" data-idr="30000"></span></td></tr>
+        <tr><td>Batur hot spring</td><td class="n">180,000</td><td class="n"><span class="peso" data-idr="180000"></span></td></tr>
+      </tbody></table></div></div>
+  </details>
+
+  <details>
+    <summary>Water sports <span class="tag">book online</span></summary>
+    <div class="d-body">
+      <p class="small">Tanjung Benoa is 10 minutes away. Booking online instead of at the counter is the biggest saving on the island — a banana boat is 80,000 online against 300,000 walk-up.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Activity</th><th class="n">Online</th><th class="n">Peso</th><th class="n">Counter</th></tr></thead>
+        <tbody>
+          <tr><td>Banana boat</td><td class="n">80,000</td><td class="n"><span class="peso" data-idr="80000"></span></td><td class="n"><span class="strike">300,000</span></td></tr>
+          <tr><td>Rolling donut</td><td class="n">125,000</td><td class="n"><span class="peso" data-idr="125000"></span></td><td class="n">—</td></tr>
+          <tr><td>Snorkelling</td><td class="n">150,000</td><td class="n"><span class="peso" data-idr="150000"></span></td><td class="n">—</td></tr>
+          <tr><td>Jet ski</td><td class="n">185,000</td><td class="n"><span class="peso" data-idr="185000"></span></td><td class="n">—</td></tr>
+          <tr><td>Parasailing</td><td class="n">250,000</td><td class="n"><span class="peso" data-idr="250000"></span></td><td class="n"><span class="strike">800,000</span></td></tr>
+          <tr><td>Sea walker</td><td class="n">325,000</td><td class="n"><span class="peso" data-idr="325000"></span></td><td class="n"><span class="strike">1,000,000</span></td></tr>
+          <tr><td>Intro scuba</td><td class="n">325,000</td><td class="n"><span class="peso" data-idr="325000"></span></td><td class="n"><span class="strike">1,000,000</span></td></tr>
+          <tr><td>Flyboard</td><td class="n">450,000</td><td class="n"><span class="peso" data-idr="450000"></span></td><td class="n"><span class="strike">1,000,000</span></td></tr>
+        </tbody></table></div>
+      <p class="small muted" style="margin-top:9px">Buy rides singly — the three-ride combos start at 435,000 and bundle in a jet ski you may not want.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Food <span class="tag">warung vs restaurant</span></summary>
+    <div class="d-body"><div class="tw"><table>
+      <thead><tr><th>Meal</th><th class="n">Rupiah</th><th class="n">Peso</th></tr></thead>
+      <tbody>
+        <tr><td>Street snack</td><td class="n">5,000–10,000</td><td class="n"><span class="peso" data-idr="5000" data-idr-max="10000"></span></td></tr>
+        <tr><td>Nasi/mie goreng, warung</td><td class="n">15,000–25,000</td><td class="n"><span class="peso" data-idr="15000" data-idr-max="25000"></span></td></tr>
+        <tr><td>Nasi campur, warung</td><td class="n">20,000–35,000</td><td class="n"><span class="peso" data-idr="20000" data-idr-max="35000"></span></td></tr>
+        <tr><td>Specialty coffee</td><td class="n">25,000–50,000</td><td class="n"><span class="peso" data-idr="25000" data-idr-max="50000"></span></td></tr>
+        <tr><td>Babi guling</td><td class="n">50,000–80,000</td><td class="n"><span class="peso" data-idr="50000" data-idr-max="80000"></span></td></tr>
+        <tr><td>Café main</td><td class="n">70,000–180,000</td><td class="n"><span class="peso" data-idr="70000" data-idr-max="180000"></span></td></tr>
+        <tr><td>Restaurant dinner</td><td class="n">200,000–400,000</td><td class="n"><span class="peso" data-idr="200000" data-idr-max="400000"></span></td></tr>
+      </tbody></table></div></div>
+  </details>
+
+  <details>
+    <summary>Transport and rental <span class="tag">per vehicle</span></summary>
+    <div class="d-body"><div class="tw"><table>
+      <thead><tr><th>Option</th><th class="n">Rupiah</th><th class="n">Peso</th></tr></thead>
+      <tbody>
+        <tr><td>Motorbike / scooter, per day</td><td class="n">70,000–150,000</td><td class="n"><span class="peso" data-idr="70000" data-idr-max="150000"></span></td></tr>
+        <tr><td>Motorbike, weekly rate</td><td class="n">450,000–800,000</td><td class="n"><span class="peso" data-idr="450000" data-idr-max="800000"></span></td></tr>
+        <tr><td>Grab / Gojek, per km</td><td class="n">5,000–8,000</td><td class="n"><span class="peso" data-idr="5000" data-idr-max="8000"></span></td></tr>
+        <tr><td>Car + driver, half day</td><td class="n">350,000–500,000</td><td class="n"><span class="peso" data-idr="350000" data-idr-max="500000"></span></td></tr>
+        <tr><td>Car + driver, full day</td><td class="n">550,000–800,000</td><td class="n"><span class="peso" data-idr="550000" data-idr-max="800000"></span></td></tr>
+        <tr><td>HiAce, full day</td><td class="n">1,500,000–2,300,000</td><td class="n"><span class="peso" data-idr="1500000" data-idr-max="2300000"></span></td></tr>
+        <tr><td>Overtime, per hour</td><td class="n">100,000–150,000</td><td class="n"><span class="peso" data-idr="100000" data-idr-max="150000"></span></td></tr>
+        <tr><td>Driver tip, per day</td><td class="n">50,000–100,000</td><td class="n"><span class="peso" data-idr="50000" data-idr-max="100000"></span></td></tr>
+      </tbody></table></div>
+      <p class="small muted" style="margin-top:9px">Scooters need an international licence to be insured, and wet-season roads are slick. Cars are priced per vehicle, so ten people split one HiAce cheaply.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Tourist levy <span class="tag">Rp 150,000 each</span></summary>
+    <div class="d-body">
+      <p class="small">Every foreign visitor pays <strong>Rp 150,000</strong> (<span class="peso" data-idr="150000"></span>) once per entry, separate from any visa. Pay on the official <strong>Love Bali</strong> portal before flying and keep the QR voucher. Children and infants pay too. Visitors who have not paid can be refused entry.</p>
+      <p class="small" style="color:var(--t-coral);font-weight:600">Three levy scams were still running in 2026 — only ever pay on the official portal, never a QR code handed to you at the airport.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ===================== PLACES ===================== -->
+<section class="panel" id="p-places" hidden>
+  <span class="pill pal">Places</span>
+  <p class="lead">Souvenirs, ink, coffee and somewhere dry when it pours. Drive times are from the hotel.</p>
+
+  <details open>
+    <summary>Souvenirs <span class="tag">on site → 1h</span></summary>
+    <div class="d-body">
+      <p class="small"><strong>Bali Collection</strong> — in the Nusa Dua resort complex, so no drive at all. Padi Art Market inside has crafts, shell work, herbs and spices sourced from Gianyar craftsmen; Luluca, Alun Alun Indonesia and Sikut Satak are in the same square, plus a duty-free store. <span class="muted">ITDC Complex, Nusa Dua</span></p>
+      <p class="small"><strong>Krisna Oleh-Oleh</strong> — Southeast Asia's largest souvenir chain, fixed prices so no haggling, and a food court. Coffee, pie susu, textiles, paintings. Branches on Jl. Raya Tuban in Kuta (35 min) and Sunset Road. <span class="muted">Best single stop if you're buying for everyone back home.</span></p>
+      <p class="small"><strong>Ubud Art Market</strong> — free entry, bargaining expected, only worth it on an Ubud day. <strong>Erlangga 2</strong> in Denpasar and <strong>The Keranjang Bali</strong> are the other big one-stop shops.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Tattoos <span class="tag">read this first</span></summary>
+    <div class="d-body">
+      <p class="small">There are roughly 280 studios on the island and quality varies a lot. <strong>Seminyak</strong> (50 min) has the strongest hygiene and international credentials; <strong>Canggu</strong> (1.5–2.5h) is the densest, with many artists trained in Europe or Australia; <strong>Kuta</strong> (35 min) has the most walk-ins and the widest quality spread.</p>
+      <p class="small">Names that come up repeatedly: <strong>Artful Ink</strong>, <strong>Mason's Ink</strong> (Australian-overseen, hospital-grade equipment), <strong>Angel Ink</strong>, <strong>Seminyak Ink</strong>, <strong>Canggu Ink Club</strong>, <strong>Amor Fati</strong>.</p>
+      <p class="small" style="color:var(--t-coral);font-weight:600">Check before you sit down: needles unsealed in front of you, single-use only, named-brand ink bottles clearly labelled. Sterile packs opened early or mystery inks mean walk out. Allow healing time before swimming — that's a real conflict with a beach trip.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Coffee <span class="tag">5–30 min</span></summary>
+    <div class="d-body">
+      <p class="small"><strong>In Nusa Dua:</strong> Kopi Petani, 25:PM Coffee, Patia Coffee, DUA Kafe (Jl. Pantai Mengiat), Rehat Cafe, Honey and Bread (in the Pepito building), Secret Cafe. Expect coffee at 25,000–50,000 and mains from 40,000.</p>
+      <p class="small"><strong>Jimbaran, 25 min:</strong> Mövenpick Café (Jl. Wanagiri No. 1, straight off the main road), Bull's Coffee, Teraskota Coffee &amp; Eatery.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>When it rains <span class="tag">indoor</span></summary>
+    <div class="d-body">
+      <p class="small"><strong>Close by:</strong> a Balinese massage or spa afternoon — the default rainy-day move, and cheap. GWK's indoor museum floors (9th and 23rd) stay dry. Bali Collection for shopping and a meal.</p>
+      <p class="small"><strong>Worth the drive:</strong> Trans Studio Bali, an indoor theme park in Denpasar, tickets from 500,000 (<span class="peso" data-idr="500000"></span>) — busy on rainy days. Beachwalk Shopping Center in Kuta. Icon Bali Mall in Sanur, which has an indoor floating market. Cinema XXI from 40,000 (<span class="peso" data-idr="40000"></span>).</p>
+      <p class="small"><strong>Make something:</strong> Balinese cooking class, silver jewellery making in Ubud, Mason Chocolate's factory workshop near Ubud, pottery, or Hatten Wines' Cellardoor tasting in Sanur. For a group: escape rooms in Sanur, or axe throwing at Finns Recreation Club in Canggu.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ===================== WALLET ===================== -->
+<section class="panel" id="p-money" hidden>
+  <span class="pill cor">Wallet</span>
+  <p class="lead">Two tools: price the trip before you go, then track what's actually left in your pocket while you're there.</p>
+
+  <h3 style="margin:18px 0 10px">Plan the trip</h3>
+  <div class="card">
+    <div class="fields">
+      <div class="field"><label for="heads">People</label><input id="heads" type="number" min="1" max="40" value="10"></div>
+      <div class="field"><label for="days">Days</label><input id="days" type="number" min="1" max="60" value="9"></div>
+      <div class="field"><label for="food">Eating</label>
+        <select id="food"><option value="90000">Warungs</option><option value="200000" selected>Mixed</option><option value="450000">Restaurants</option></select></div>
+      <div class="field"><label for="transport">Transport</label>
         <select id="transport">
-          <option value="scooter">Scooter each</option>
-          <option value="car1" selected>One car + driver</option>
-          <option value="car2">Two cars + drivers</option>
+          <option value="moto">Motorbike each</option>
+          <option value="car1">One car + driver</option>
+          <option value="car2" selected>Two cars + drivers</option>
           <option value="hiace">One HiAce</option>
-          <option value="none">Ride-hailing only</option>
-        </select>
-      </div>
-      <div class="field"><label for="drivedays">Car / scooter days</label><input id="drivedays" type="number" min="0" max="60" value="3"></div>
-      <div class="field"><label for="budget">Your budget &#8369; (optional)</label><input id="budget" type="number" min="0" step="500" placeholder="e.g. 40000"></div>
+          <option value="grab">Grab / Gojek only</option>
+        </select></div>
+      <div class="field"><label for="drivedays">Vehicle days</label><input id="drivedays" type="number" min="0" max="60" value="4"></div>
+      <div class="field"><label for="budget">Budget ₱ (optional)</label><input id="budget" type="number" min="0" step="500" placeholder="optional"></div>
     </div>
-
-    <h3 style="margin-bottom:10px">Activities</h3>
     <div class="picks" id="picks"></div>
-    <div class="empty" id="empty" hidden>Nothing ticked yet — the total below is food and transport only. Tick a few activities to price a real trip.</div>
+    <div class="row">
+      <div class="stat"><div class="k">Per person</div><div class="v" id="t-pp">₱0</div><div class="s" id="t-pp-idr">Rp 0</div></div>
+      <div class="stat cor"><div class="k">Whole group</div><div class="v" id="t-all">₱0</div><div class="s" id="t-all-idr">Rp 0</div></div>
+      <div class="stat sun"><div class="k">Per person, per day</div><div class="v" id="t-day">₱0</div><div class="s">All in, excluding flights and rooms</div></div>
+    </div>
+    <div id="budget-wrap" hidden><div class="bar" id="bar"><i style="width:0%"></i></div><p class="small" id="budget-line" style="margin-top:9px"></p></div>
+  </div>
 
-    <div class="totals">
-      <div class="stat"><div class="k">Per person</div><div class="v" id="t-pp">&#8369;0</div><div class="s" id="t-pp-idr">Rp 0</div></div>
-      <div class="stat hot"><div class="k">Whole group</div><div class="v" id="t-all">&#8369;0</div><div class="s" id="t-all-idr">Rp 0</div></div>
-      <div class="stat sun"><div class="k">Per person, per day</div><div class="v" id="t-day">&#8369;0</div><div class="s">Activities, food and transport</div></div>
+  <hr class="wave">
+
+  <h3 style="margin:0 0 10px">Pocket money</h3>
+  <div class="card">
+    <div class="fields">
+      <div class="field"><label for="pocket">Cash you brought (Rp)</label><input id="pocket" type="number" min="0" step="50000" value="3000000"></div>
+      <div class="field"><label for="sp-label">What for</label><input id="sp-label" type="text" placeholder="Lunch at the warung"></div>
+      <div class="field"><label for="sp-amt">Amount (Rp)</label><input id="sp-amt" type="number" min="0" step="5000" placeholder="35000"></div>
+      <div class="field" style="justify-content:flex-end"><button class="btn" id="sp-add" type="button">Log it</button></div>
     </div>
-    <div id="budget-wrap" hidden>
-      <div class="bar" id="bar"><i style="width:0%"></i></div>
-      <p class="budget-line" id="budget-line"></p>
+    <div class="row" style="margin-bottom:14px">
+      <div class="stat cor"><div class="k">Spent</div><div class="v" id="w-spent">Rp 0</div><div class="s" id="w-spent-php">₱0</div></div>
+      <div class="stat pal"><div class="k">Left</div><div class="v" id="w-left">Rp 0</div><div class="s" id="w-left-php">₱0</div></div>
     </div>
-    <p class="budget-line">Excludes flights, accommodation and shopping. Food and transport scale with the days you set.</p>
+    <div class="bar" id="w-bar"><i style="width:0%"></i></div>
+    <div id="spends" style="margin-top:14px"></div>
+    <div class="actionbar"><button class="btn ghost sm" id="w-clear" type="button">Clear the log</button>
+      <span class="small muted">Saved on this device only.</span></div>
   </div>
 </section>
 
-<section>
-  <div class="sec-head"><span class="sec-num">11</span><h2>Before you fly</h2></div>
-  <div class="prog-head">
-    <span class="prog-count" id="prog-count">0 of 10 done</span>
-    <span class="hint">Saved in this browser only</span>
+<!-- ===================== PACKING ===================== -->
+<section class="panel" id="p-pack" hidden>
+  <span class="pill">Packing &amp; prep</span>
+  <p class="lead">Wet season, ten people, nine days. Tick as you go — it saves on this device.</p>
+  <div class="row" style="margin-bottom:14px">
+    <div class="stat pal"><div class="k">Essentials</div><div class="v" id="pk-count">0 / 0</div><div class="s">What to bring</div></div>
+    <div class="stat lag"><div class="k">Before you fly</div><div class="v" id="pr-count">0 / 0</div><div class="s">Bookings and admin</div></div>
   </div>
-  <div class="bar" id="prog-bar"><i style="width:0%;background:#0EAD69"></i></div>
-  <div class="checks" id="checks" style="margin-top:12px"></div>
-  <div class="done-all" id="done-all">All ten done. Nothing left to arrange — go and enjoy it.</div>
-  <div class="actionbar">
-    <button class="btn" id="reset-checks" type="button">Clear the checklist</button>
-    <span id="undo-slot"></span>
-  </div>
+  <h3 style="margin:16px 0 9px">Essentials</h3>
+  <div id="packlist"></div>
+  <h3 style="margin:20px 0 9px">Before you fly</h3>
+  <div id="preplist"></div>
+  <div class="actionbar"><button class="btn ghost sm" id="reset-checks" type="button">Clear both lists</button><span id="undo-slot"></span></div>
 </section>
 
+<!-- ===================== DOCS ===================== -->
+<section class="panel" id="p-docs" hidden>
+  <span class="pill cor">Documents</span>
+  <div class="warnbox">
+    <b>Stays on this phone.</b><br>
+    Your screenshots are stored in this browser only. They are never uploaded, never part of the shared page, and nobody you send the link to can see them — so each of you adds your own IDs on your own device. Clearing your browser data deletes them, so keep the originals in your photos too.
+  </div>
+  <p class="lead">Boarding passes, e-visas, hotel vouchers, insurance, IDs, the Love Bali levy QR.</p>
+  <label class="drop" for="doc-input" id="drop">
+    <strong>Tap to add a screenshot</strong><br>
+    <span class="small">Images only · stored on this device</span>
+    <input id="doc-input" type="file" accept="image/*" multiple hidden>
+  </label>
+  <div class="vault" id="vault"></div>
+  <p class="small muted" id="vault-empty">Nothing saved yet.</p>
+</section>
+
+<hr class="wave">
 <section>
-  <div class="sec-head"><span class="sec-num">12</span><h2>Sources</h2></div>
-  <p>Prices checked November 2026. Entrance fees, boat fares and water-sports rates change without notice and differ between operators — reconfirm anything you are committing real money to.</p>
+  <h3 style="margin-bottom:10px">Sources</h3>
+  <p class="small muted">Checked November 2026. Fees and fares change without notice — reconfirm before paying.</p>
   <div class="src">
-    <h3>Fees and attractions</h3>
+    <h3>Prices</h3>
     <ul>
-      <li><a href="https://baliindotour.com/travel-guide/bali-entrance-fees">Bali entrance fees 2026 — Bali Indo Tour</a></li>
-      <li><a href="https://www.baliholidaysecrets.com/bali-entrance-fees/">Complete list of entrance fees — Bali Holiday Secrets</a></li>
-      <li><a href="https://thebalisun.com/?p=60110">2026 price watch, Badung Regency — The Bali Sun</a></li>
-      <li><a href="https://www.water-sports-bali.com/uluwatu-temple-entrance-fee-guide/">Uluwatu Temple entrance fee guide</a></li>
-      <li><a href="https://www.bali-travel-life.com/kecak-and-fire-dance-ticket-at-uluwatu-temple/">Kecak and fire dance ticket — Bali Travel Life</a></li>
-      <li><a href="https://kura2bus.com/blog/bali-temple-guide-entrance-fees-2026/">Bali temple guide 2026 — Kura-Kura</a></li>
-      <li><a href="https://www.ohana-agency.com/blog/bali-temples-guide">Bali temples guide 2026 — Ohana</a></li>
-      <li><a href="https://heybali.info/news/pandawa-beach-bali-2026/">Pandawa Beach 2026 entry fees — Hey Bali</a></li>
-      <li><a href="https://www.jonnymelon.com/melasti-beach-bali/">Melasti Beach guide — Jonny Melon</a></li>
-      <li><a href="https://www.baliholidaysecrets.com/tirta-empul-temple/">Tirta Empul guide 2026</a></li>
+      <li><a href="https://baliindotour.com/travel-guide/bali-entrance-fees">Entrance fees 2026</a></li>
+      <li><a href="https://www.baliholidaysecrets.com/bali-entrance-fees/">Full fee list</a></li>
+      <li><a href="https://thebalisun.com/?p=60110">2026 price watch</a></li>
+      <li><a href="https://www.water-sports-bali.com/tanjung-benoa-water-sports/price-list">Tanjung Benoa prices</a></li>
+      <li><a href="https://travjoy.com/blog/best-restaurants-in-bali-where-to-eat-in-every-area">Food price bands</a></li>
+      <li><a href="https://www.thebalitravels.com/before-hiring-bali-private-drivers-heres-what-you-should-know">Driver rates</a></li>
     </ul>
-    <h3>Nusa Penida</h3>
+    <h3>Getting around</h3>
     <ul>
-      <li><a href="https://balideeper.com/articles/nusa-penida-day-trip-from-bali-complete-guide-with-prices-2026">Day trip prices 2026 — Bali Deeper</a></li>
-      <li><a href="https://beachynest.com/nusa-penida-travel-cost/">Travel cost 2026 — BeachyNest</a></li>
-      <li><a href="https://tropictripper.com/nusa-penida/nusa-penida-day-trip-budget/">Day trip budget — TropicTripper</a></li>
-      <li><a href="https://basebalitours.com/guides/best-things-to-do-in-nusa-penida/">Fast boat fares — baseBali</a></li>
-      <li><a href="https://herpassportlife.com/nusa-penida-guide/">Getting there — Her Passport Life</a></li>
+      <li><a href="https://www.baliholidaysecrets.com/how-to-get-to-nusa-dua/">Routes to Nusa Dua</a></li>
+      <li><a href="https://www.baliholidaysecrets.com/bali-traffic/">Bali traffic 2026</a></li>
+      <li><a href="https://www.baliholidaysecrets.com/how-to-get-to-ubud/">Routes to Ubud</a></li>
+      <li><a href="https://balideeper.com/articles/nusa-penida-day-trip-from-bali-complete-guide-with-prices-2026">Nusa Penida day trip</a></li>
     </ul>
-    <h3>Water sports</h3>
+    <h3>Places</h3>
     <ul>
-      <li><a href="https://www.water-sports-bali.com/tanjung-benoa-water-sports/price-list">Tanjung Benoa price list</a></li>
-      <li><a href="https://water-sports-bali.com/tanjung-benoa-water-sports">Online vs on-site rates</a></li>
-      <li><a href="https://www.water-sports-bali.com/marine-activities-package-nusa-dua">Package prices 2026</a></li>
-      <li><a href="https://www.water-sports-bali.com/banana-boat-rides-bali/">Banana boat price and booking</a></li>
+      <li><a href="https://www.nowbali.co.id/uniquely-bali-2/">Bali Collection shopping</a></li>
+      <li><a href="https://dijiwasanctuaries.com/magazine/best-10-bali-gift-shops-and-art-markets-in-2025-where-to-shop-for-souvenirs-crafts-and-culture">Souvenir shops</a></li>
+      <li><a href="https://whatsnewindonesia.com/bali/ultimate-guide/food-and-drink/best-coffee-shop-cafe-nusa-dua">Nusa Dua cafés</a></li>
+      <li><a href="https://tatscout.com/blog/best-tattoo-studios-bali-2025">Tattoo studios by area</a></li>
+      <li><a href="https://trishnandacarecentre.com/?p=17175">Tattoo hygiene standards</a></li>
+      <li><a href="https://baliuntold.com/things-to-do/rainy-day/">Rainy-day activities</a></li>
+      <li><a href="https://www.nowbali.co.id/indoor-activities-when-its-raining-in-bali/">Indoor classes and workshops</a></li>
     </ul>
-    <h3>Transport, food and budget</h3>
+    <h3>Entry and weather</h3>
     <ul>
-      <li><a href="https://www.thebalitravels.com/before-hiring-bali-private-drivers-heres-what-you-should-know">Private driver cost — The Bali Travels</a></li>
-      <li><a href="https://www.balitouristic.com/?p=30930">Car with driver price list 2026 — Bali Touristic</a></li>
-      <li><a href="https://baliuntold.com/visit/getting-around/private-drivers/">Private drivers — Bali Untold</a></li>
-      <li><a href="https://www.baliholidaysecrets.com/bali-travel-costs/">Trip costs 2026 — Bali Holiday Secrets</a></li>
-      <li><a href="https://travjoy.com/blog/best-restaurants-in-bali-where-to-eat-in-every-area">Restaurant price bands — Travjoy</a></li>
-      <li><a href="https://www.balivillahub.com/blog/is-eating-out-in-bali-affordable-for-travelers-and-expats">Eating out costs — Bali Villa Hub</a></li>
-      <li><a href="https://travelguidestip.com/best-food-bali/">Warung prices — Travel Guides Tip</a></li>
-    </ul>
-    <h3>Levy and entry</h3>
-    <ul>
-      <li><a href="https://blog.wego.com/bali-tourist-levy/">Tourist levy 2026 — Wego</a></li>
-      <li><a href="https://www.bali-travel-life.com/bali-tourism-levy/">Levy, exemptions and scams — Bali Travel Life</a></li>
-      <li><a href="https://www.cekindo.com/blog/bali-tourist-tax">Bali tourist tax — Cekindo</a></li>
-      <li><a href="https://thebalisun.com/bali-tourism-tax-explained-for-2026-heres-what-tourists-need-to-know">Tourism tax explained — The Bali Sun</a></li>
-    </ul>
-    <h3>Weather and seasons</h3>
-    <ul>
-      <li><a href="https://www.asiahighlights.com/indonesia/bali/weather-in-december">Bali in December — Asia Highlights</a></li>
-      <li><a href="https://bali.com/travel-guide/weather-by-month/weather-december/">December weather — bali.com</a></li>
-      <li><a href="https://pickyourtrail.com/tourism/bali/bali-in-december">Bali in December 2026 — Pick Your Trail</a></li>
-    </ul>
-    <h3>Exchange rate</h3>
-    <ul>
-      <li><a href="https://wise.com/us/currency-converter/php-to-idr-rate">PHP to IDR — Wise</a></li>
-      <li><a href="https://www.revolut.com/currency-converter/convert-php-to-idr-exchange-rate/">PHP to IDR — Revolut</a></li>
+      <li><a href="https://blog.wego.com/bali-tourist-levy/">Tourist levy</a></li>
+      <li><a href="https://www.bali-travel-life.com/bali-tourism-levy/">Levy scams</a></li>
+      <li><a href="https://www.asiahighlights.com/indonesia/bali/weather-in-december">Bali in December</a></li>
+      <li><a href="https://wise.com/us/currency-converter/php-to-idr-rate">PHP/IDR rate</a></li>
     </ul>
   </div>
 </section>
-
-<footer>
-  <p>A price reference, not a booking service. Every figure is a planning number: confirm fares and fees with the operator or at the gate before you pay.</p>
-</footer>
 
 </div>
 
 <script>
 (function(){
   "use strict";
+  var $ = function(id){ return document.getElementById(id); };
 
-  var DEFAULT_RATE = 3.51, MIN_RATE = 1, MAX_RATE = 10;
-  var rateEl = document.getElementById('rate');
-  var invEl  = document.getElementById('inv');
+  /* ========== tabs: in-page only, no navigation ========== */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(o){
+        o.setAttribute('aria-selected', String(o === t));
+        $(o.dataset.panel).hidden = (o !== t);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
 
+  /* ========== rate ========== */
+  var DEF = 3.51, rateEl = $('rate');
   function rate(){
     var v = parseFloat(rateEl.value);
-    if (!isFinite(v)) v = DEFAULT_RATE;
-    if (v < MIN_RATE) v = MIN_RATE;
-    if (v > MAX_RATE) v = MAX_RATE;
-    return v / 1000;                    /* PHP per 1 IDR */
+    if (!isFinite(v)) v = DEF;
+    if (v < 1) v = 1; if (v > 10) v = 10;
+    return v / 1000;
   }
-  function php(idr){ return idr * rate(); }
+  function php(i){ return i * rate(); }
   function money(n){
-    var r = n < 10 ? Math.round(n * 10) / 10 : Math.round(n);
+    var r = n < 10 ? Math.round(n*10)/10 : Math.round(n);
     return '₱' + r.toLocaleString('en-US');
   }
   function rp(n){ return 'Rp ' + Math.round(n).toLocaleString('en-US'); }
 
-  /* ---- re-price every peso figure; flash so the change is visible ---- */
   var pesos = Array.prototype.slice.call(document.querySelectorAll('.peso'));
-  function repriceAll(flash){
-    var r = rate();
-    invEl.textContent = Math.round(1 / r).toLocaleString('en-US');
+  function reprice(flash){
+    $('inv').textContent = Math.round(1/rate()).toLocaleString('en-US');
     pesos.forEach(function(el){
-      var lo = parseFloat(el.getAttribute('data-idr'));
-      var hi = el.getAttribute('data-idr-max');
+      var lo = parseFloat(el.getAttribute('data-idr')), hi = el.getAttribute('data-idr-max');
       if (!isFinite(lo)) return;
-      el.textContent = hi
-        ? money(php(lo)) + '–' + money(php(parseFloat(hi))).replace('₱','')
-        : money(php(lo));
+      el.textContent = hi ? money(php(lo)) + '–' + money(php(parseFloat(hi))).replace('₱','') : money(php(lo));
       if (flash){ el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
     });
-    var gap = document.getElementById('bb-gap');
-    if (gap) gap.textContent = Math.round(php(300000 - 80000)).toLocaleString('en-US');
-    calc();
+    calc(); wallet();
   }
+  rateEl.addEventListener('input', function(){ reprice(false); });
+  rateEl.addEventListener('change', function(){ reprice(true); });
 
-  /* ---- trip calculator ---- */
-  var ACTIVITIES = [
-    { id:'levy',   name:'Bali tourist levy',       detail:'Once per entry, everyone pays',              idr:150000, on:true },
-    { id:'bukit',  name:'Bukit day',               detail:'Pandawa, Melasti, Uluwatu Temple + Kecak',    idr:215000, on:true },
-    { id:'ubud',   name:'Ubud day',                detail:'Tegalalang, Tirta Empul, one waterfall',      idr:155000, on:true },
-    { id:'penida', name:'Nusa Penida day trip',    detail:'Return fast boat + site fees',                idr:440000, on:true },
-    { id:'water',  name:'Water sports',            detail:'Banana boat + parasailing, booked online',    idr:330000, on:true },
-    { id:'east',   name:'East Bali day',           detail:'Besakih, Tirta Gangga, Lempuyang + shuttle',  idr:345000, on:false },
-    { id:'gwk',    name:'Garuda Wisnu Kencana',    detail:'The statue park at Ungasan',                  idr:150000, on:false },
-    { id:'monkey', name:'Monkey Forest, Ubud',     detail:'Confirm the rate at the gate',                idr:130000, on:false },
-    { id:'spa',    name:'Balinese massage, 1 hr',  detail:'Typical neighbourhood spa rate',              idr:150000, on:false },
-    { id:'jimba',  name:'Jimbaran seafood dinner', detail:'Grilled seafood on the sand',                 idr:300000, on:false }
+  /* ========== rate bar tucks away on scroll down ========== */
+  var bar = $('ratebar'), lastY = 0;
+  window.addEventListener('scroll', function(){
+    var y = window.scrollY;
+    if (y > 150 && y > lastY) bar.classList.add('tucked');
+    else bar.classList.remove('tucked');
+    lastY = y;
+  }, { passive: true });
+
+  /* ========== storage helper ========== */
+  function load(k, d){ try { var s = localStorage.getItem(k); return s ? JSON.parse(s) : d; } catch(e){ return d; } }
+  function save(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+
+  /* ========== day planner ========== */
+  var PLACES = [
+    { id:'benoa',  name:'Tanjung Benoa water sports', zone:'bukit', from:10, stay:120 },
+    { id:'collection', name:'Bali Collection',        zone:'bukit', from:5,  stay:90 },
+    { id:'pandawa',name:'Pandawa Beach',              zone:'bukit', from:20, stay:90 },
+    { id:'melasti',name:'Melasti Beach',              zone:'bukit', from:30, stay:90 },
+    { id:'gwk',    name:'GWK',                        zone:'bukit', from:25, stay:90 },
+    { id:'ulu',    name:'Uluwatu Temple',             zone:'bukit', from:35, stay:90 },
+    { id:'kecak',  name:'Kecak fire dance',           zone:'bukit', from:35, stay:60 },
+    { id:'jimba',  name:'Jimbaran seafood dinner',    zone:'bukit', from:25, stay:90 },
+    { id:'spa',    name:'Spa / massage',              zone:'bukit', from:10, stay:90 },
+    { id:'kuta',   name:'Kuta / Krisna souvenirs',    zone:'south', from:35, stay:90 },
+    { id:'semi',   name:'Seminyak (tattoo, shops)',   zone:'south', from:50, stay:150 },
+    { id:'trans',  name:'Trans Studio Bali',          zone:'south', from:35, stay:240 },
+    { id:'sanur',  name:'Sanur / Icon Mall',          zone:'east',  from:30, stay:120 },
+    { id:'tegal',  name:'Tegalalang rice terrace',    zone:'north', from:95, stay:60 },
+    { id:'tirta',  name:'Tirta Empul',                zone:'north', from:100,stay:90 },
+    { id:'fall',   name:'Tegenungan waterfall',       zone:'north', from:85, stay:75 },
+    { id:'ubud',   name:'Ubud town + art market',     zone:'north', from:90, stay:120 },
+    { id:'penida', name:'Nusa Penida (whole day)',    zone:'island',from:75, stay:420 }
   ];
-  var TRANSPORT = {
-    scooter:{ perPersonDay:100000, perGroupDay:0,       scale:'hire' },
-    car1:   { perPersonDay:0,      perGroupDay:700000,  scale:'hire' },
-    car2:   { perPersonDay:0,      perGroupDay:1400000, scale:'hire' },
-    hiace:  { perPersonDay:0,      perGroupDay:1800000, scale:'hire' },
-    none:   { perPersonDay:60000,  perGroupDay:0,       scale:'trip' }
-  };
-
-  var picksEl = document.getElementById('picks');
-  ACTIVITIES.forEach(function(a){
-    var row = document.createElement('label');
-    row.className = 'pick';
-    row.innerHTML =
-      '<input type="checkbox" id="act-' + a.id + '"' + (a.on ? ' checked' : '') + '>' +
-      '<span class="txt"><span class="nm">' + a.name + '</span>' +
-        '<span class="dt">' + a.detail + '</span></span>' +
-      '<span class="pr" data-pr="' + a.id + '"></span>';
-    picksEl.appendChild(row);
-    row.querySelector('input').addEventListener('change', calc);
+  var sel = $('addstop');
+  PLACES.forEach(function(p){
+    var o = document.createElement('option');
+    o.value = p.id; o.textContent = p.name;
+    sel.appendChild(o);
   });
 
-  var heads = document.getElementById('heads');
-  var days = document.getElementById('days');
-  var foodSel = document.getElementById('food');
-  var transportSel = document.getElementById('transport');
-  var driveDays = document.getElementById('drivedays');
-  var budgetEl = document.getElementById('budget');
-  var lastTotal = null;
-
-  function num(el, min, fallback){
-    var v = parseFloat(el.value);
-    if (!isFinite(v) || v < min) return fallback;
-    return v;
+  var itin = load('bali-itin-v1', ['pandawa','ulu','kecak']);
+  function hhmm(mins){
+    mins = ((Math.round(mins) % 1440) + 1440) % 1440;
+    var h = Math.floor(mins/60), m = mins % 60;
+    return (h<10?'0':'') + h + ':' + (m<10?'0':'') + m;
   }
-  function bump(el){
-    el.classList.add('bump');
-    setTimeout(function(){ el.classList.remove('bump'); }, 260);
+  function dur(mins){
+    var h = Math.floor(mins/60), m = Math.round(mins%60);
+    return h ? (h + 'h' + (m ? (m<10?'0':'') + m : '')) : m + 'm';
   }
+  function legMinutes(prevZone, place){
+    if (prevZone === place.zone) return place.zone === 'north' ? 30 : 20;
+    return place.from;
+  }
+  function renderItin(){
+    var box = $('itin'); box.innerHTML = '';
+    var traffic = parseFloat($('traffic').value) || 1;
+    var parts = ($('start').value || '08:00').split(':');
+    var t = (parseInt(parts[0],10)||0)*60 + (parseInt(parts[1],10)||0);
+    var road = 0, see = 0, zone = 'bukit';
 
-  function calc(){
-    var n = Math.round(num(heads, 1, 1));
-    var d = Math.round(num(days, 1, 1));
-    var dd = Math.round(num(driveDays, 0, 0));
-    if (dd > d) dd = d;
-
-    var perPerson = 0, ticked = 0;
-    ACTIVITIES.forEach(function(a){
-      var box = document.getElementById('act-' + a.id);
-      var tag = picksEl.querySelector('[data-pr="' + a.id + '"]');
-      if (tag) tag.textContent = money(php(a.idr));
-      if (box && box.checked){ perPerson += a.idr; ticked++; }
-    });
-    document.getElementById('empty').hidden = ticked > 0;
-
-    perPerson += parseFloat(foodSel.value) * d;
-
-    var t = TRANSPORT[transportSel.value] || TRANSPORT.car1;
-    var tDays = t.scale === 'trip' ? d : dd;
-    perPerson += t.perPersonDay * tDays;
-    var groupExtra = t.perGroupDay * tDays;
-
-    var groupTotal = perPerson * n + groupExtra;
-    var ppTotal = groupTotal / n;
-
-    var ppEl = document.getElementById('t-pp');
-    ppEl.textContent = money(php(ppTotal));
-    document.getElementById('t-pp-idr').textContent = rp(ppTotal);
-    document.getElementById('t-all').textContent = money(php(groupTotal));
-    document.getElementById('t-all-idr').textContent = rp(groupTotal);
-    document.getElementById('t-day').textContent = money(php(ppTotal / d));
-    if (lastTotal !== null && Math.round(groupTotal) !== lastTotal) bump(ppEl);
-    lastTotal = Math.round(groupTotal);
-
-    var b = parseFloat(budgetEl.value);
-    var wrap = document.getElementById('budget-wrap');
-    var line = document.getElementById('budget-line');
-    if (isFinite(b) && b > 0){
-      wrap.hidden = false;
-      var spent = php(groupTotal);
-      var pct = Math.min(100, (spent / b) * 100);
-      var bar = document.getElementById('bar');
-      bar.firstElementChild.style.width = pct.toFixed(1) + '%';
-      bar.className = spent > b ? 'bar over' : (pct > 85 ? 'bar near' : 'bar');
-      var diff = b - spent;
-      line.className = diff >= 0 ? 'budget-line' : 'budget-line over';
-      line.innerHTML = diff >= 0
-        ? 'Uses <strong>' + Math.round(pct) + '%</strong> of your budget &mdash; <strong>' + money(diff) + '</strong> left over.'
-        : '<strong>' + money(-diff) + '</strong> over. Drop a day trip, switch to warung meals, or cut a car day.';
-    } else {
-      wrap.hidden = true;
+    if (!itin.length){
+      box.innerHTML = '<p class="small muted">No stops yet. Pick one above and add it.</p>';
+      $('t-end').textContent = '—'; $('t-endnote').textContent = 'Add a stop to start';
+      $('t-road').textContent = '0h'; $('t-see').textContent = '0h';
+      return;
     }
+    itin.forEach(function(id, i){
+      var p = PLACES.filter(function(x){ return x.id === id; })[0];
+      if (!p) return;
+      /* first leg always starts at the hotel, so use the real drive time
+         rather than the same-area shortcut */
+      var leg = Math.round((i === 0 ? p.from : legMinutes(zone, p)) * traffic);
+      road += leg; t += leg;
+      var tv = document.createElement('div');
+      tv.className = 'travel';
+      tv.textContent = '↓ ' + dur(leg) + ' drive';
+      box.appendChild(tv);
+
+      var row = document.createElement('div');
+      row.className = 'stop';
+      row.innerHTML = '<span class="time">' + hhmm(t) + '</span>' +
+        '<span class="meta"><span class="nm"></span><span class="dt">' + dur(p.stay) + ' here</span></span>' +
+        '<button class="x" type="button" aria-label="Remove">×</button>';
+      row.querySelector('.nm').textContent = p.name;
+      row.querySelector('.x').addEventListener('click', function(){
+        itin.splice(i,1); save('bali-itin-v1', itin); renderItin();
+      });
+      box.appendChild(row);
+      t += p.stay; see += p.stay; zone = p.zone;
+    });
+    var back = Math.round(legMinutes('__base__', PLACES.filter(function(x){return x.id===itin[itin.length-1];})[0] || PLACES[0]) * traffic);
+    road += back; t += back;
+    var tvb = document.createElement('div');
+    tvb.className = 'travel'; tvb.textContent = '↓ ' + dur(back) + ' back to the hotel';
+    box.appendChild(tvb);
+
+    $('t-end').textContent = hhmm(t);
+    $('t-road').textContent = dur(road);
+    $('t-see').textContent = dur(see);
+    var late = t > 22*60;
+    $('t-endnote').textContent = late ? 'That is a long day — drop a stop' : 'Leaving at ' + ($('start').value || '08:00');
+    $('t-endnote').style.color = late ? 'var(--t-coral)' : '';
   }
-
-  [heads, days, foodSel, transportSel, driveDays, budgetEl].forEach(function(el){
-    el.addEventListener('input', calc);
-    el.addEventListener('change', calc);
+  $('add-btn').addEventListener('click', function(){
+    itin.push(sel.value); save('bali-itin-v1', itin); renderItin();
   });
-  rateEl.addEventListener('input', function(){ repriceAll(false); });
-  rateEl.addEventListener('change', function(){
-    if (parseFloat(rateEl.value) !== rate() * 1000) rateEl.value = (rate() * 1000).toFixed(2);
-    repriceAll(true);
+  $('clear-itin').addEventListener('click', function(){
+    itin = []; save('bali-itin-v1', itin); renderItin();
+  });
+  ['start','traffic'].forEach(function(id){
+    $(id).addEventListener('input', renderItin);
+    $(id).addEventListener('change', renderItin);
   });
 
-  /* ---- checklist, with undo instead of a confirmation ---- */
-  var TASKS = [
-    { id:'levy',   name:'Pay the tourist levy on the official Love Bali portal', detail:'Rp 150,000 each. Save the QR voucher to your phone' },
-    { id:'visa',   name:'Check what your passport needs to enter Indonesia',     detail:'Separate from the levy' },
-    { id:'driver', name:'Book a driver on WhatsApp',                             detail:'Confirm the overtime rate and send photos of your luggage' },
-    { id:'kecak',  name:'Buy Kecak dance tickets online',                        detail:'Cheaper than the gate; temple entry is charged separately' },
-    { id:'boat',   name:'Book the Nusa Penida fast boat direct',                 detail:'Compare two or three operators, not through a hotel' },
-    { id:'water',  name:'Book water sports online, in writing',                  detail:'Up to 73% below counter prices' },
-    { id:'cash',   name:'Plan where to change money',                            detail:'Authorised changer in Bali, not your departure airport' },
-    { id:'pack',   name:'Pack for the season',                                   detail:'Poncho, repellent, shoes with grip, fast-drying clothes' },
-    { id:'sim',    name:'Sort data on arrival',                                   detail:'An eSIM or a local SIM at the airport' },
-    { id:'copy',   name:'Save offline copies of every booking',                   detail:'Signal is patchy on Penida and in the hills' }
+  /* ========== trip calculator ========== */
+  var ACTS = [
+    { id:'levy',  name:'Tourist levy',        dt:'Once per entry, everyone pays',            idr:150000, on:true },
+    { id:'bukit', name:'Bukit day',           dt:'Pandawa, Melasti, Uluwatu + Kecak',        idr:215000, on:true },
+    { id:'ubud',  name:'Ubud day',            dt:'Tegalalang, Tirta Empul, a waterfall',     idr:155000, on:true },
+    { id:'penida',name:'Nusa Penida',         dt:'Return fast boat and site fees',           idr:440000, on:true },
+    { id:'water', name:'Water sports',        dt:'Banana boat + parasailing, booked online', idr:330000, on:true },
+    { id:'gwk',   name:'GWK',                 dt:'The statue park at Ungasan',               idr:150000, on:false },
+    { id:'spa',   name:'Spa, one hour',       dt:'Neighbourhood rate, not the resort',       idr:150000, on:false },
+    { id:'jimba', name:'Jimbaran dinner',     dt:'Grilled seafood on the sand',              idr:300000, on:false },
+    { id:'tattoo',name:'Small tattoo',        dt:'Reputable Seminyak studio, rough guide',   idr:900000, on:false },
+    { id:'souv',  name:'Souvenir budget',     dt:'Krisna or Bali Collection, per head',      idr:400000, on:false },
+    { id:'trans', name:'Trans Studio Bali',   dt:'Indoor theme park, rainy-day fallback',    idr:500000, on:false }
   ];
-  var KEY = 'bali-prices-checklist-v2';
-  var state = {};
-  try { var saved = localStorage.getItem(KEY); if (saved) state = JSON.parse(saved) || {}; }
-  catch (e) { state = {}; }
-
-  function persist(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
-
-  var checksEl = document.getElementById('checks');
-  var rows = {};
-  TASKS.forEach(function(t){
-    var row = document.createElement('label');
-    row.className = 'chk';
-    row.innerHTML =
-      '<input type="checkbox">' +
-      '<span class="txt"><span class="nm">' + t.name + '</span>' +
-        '<span class="dt">' + t.detail + '</span></span>';
-    checksEl.appendChild(row);
-    rows[t.id] = row;
-    row.querySelector('input').addEventListener('change', function(){
-      state[t.id] = this.checked;
-      persist();
-      paint();
+  var TR = {
+    moto:  { pp:100000, grp:0,       scale:'hire' },
+    car1:  { pp:0,      grp:700000,  scale:'hire' },
+    car2:  { pp:0,      grp:1400000, scale:'hire' },
+    hiace: { pp:0,      grp:1800000, scale:'hire' },
+    grab:  { pp:60000,  grp:0,       scale:'trip' }
+  };
+  var picks = $('picks');
+  ACTS.forEach(function(a){
+    var l = document.createElement('label');
+    l.className = 'pick';
+    l.innerHTML = '<input type="checkbox" id="act-'+a.id+'"'+(a.on?' checked':'')+'>' +
+      '<span><span class="nm"></span><span class="dt"></span></span>' +
+      '<span class="pr" data-pr="'+a.id+'"></span>';
+    l.querySelector('.nm').textContent = a.name;
+    l.querySelector('.dt').textContent = a.dt;
+    picks.appendChild(l);
+    l.querySelector('input').addEventListener('change', calc);
+  });
+  function numv(el, min, fb){ var v = parseFloat(el.value); return (!isFinite(v) || v < min) ? fb : v; }
+  function calc(){
+    var n = Math.round(numv($('heads'),1,1)), d = Math.round(numv($('days'),1,1));
+    var dd = Math.round(numv($('drivedays'),0,0)); if (dd > d) dd = d;
+    var pp = 0;
+    ACTS.forEach(function(a){
+      var tag = picks.querySelector('[data-pr="'+a.id+'"]');
+      if (tag) tag.textContent = money(php(a.idr));
+      var b = $('act-'+a.id);
+      if (b && b.checked) pp += a.idr;
     });
+    pp += parseFloat($('food').value) * d;
+    var t = TR[$('transport').value] || TR.car2;
+    var td = t.scale === 'trip' ? d : dd;
+    pp += t.pp * td;
+    var group = pp * n + t.grp * td, ppT = group / n;
+    $('t-pp').textContent = money(php(ppT));
+    $('t-pp-idr').textContent = rp(ppT);
+    $('t-all').textContent = money(php(group));
+    $('t-all-idr').textContent = rp(group);
+    $('t-day').textContent = money(php(ppT/d));
+    var b = parseFloat($('budget').value);
+    if (isFinite(b) && b > 0){
+      $('budget-wrap').hidden = false;
+      var spent = php(group), pct = Math.min(100, spent/b*100), el = $('bar');
+      el.firstElementChild.style.width = pct.toFixed(1) + '%';
+      el.className = spent > b ? 'bar over' : (pct > 85 ? 'bar near' : 'bar');
+      var diff = b - spent;
+      $('budget-line').innerHTML = diff >= 0
+        ? 'Uses <strong>'+Math.round(pct)+'%</strong> — <strong>'+money(diff)+'</strong> spare.'
+        : '<strong>'+money(-diff)+'</strong> over. Drop a day trip or switch to warung meals.';
+    } else { $('budget-wrap').hidden = true; }
+  }
+  ['heads','days','food','transport','drivedays','budget'].forEach(function(id){
+    $(id).addEventListener('input', calc); $(id).addEventListener('change', calc);
   });
 
-  function paint(){
-    var done = 0;
-    TASKS.forEach(function(t){
-      var on = !!state[t.id];
-      if (on) done++;
-      rows[t.id].className = 'chk' + (on ? ' done' : '');
-      rows[t.id].querySelector('input').checked = on;
+  /* ========== pocket money ========== */
+  var spends = load('bali-spends-v1', []);
+  function wallet(){
+    var pocket = numv($('pocket'), 0, 0);
+    var spent = spends.reduce(function(s,x){ return s + x.amt; }, 0);
+    var left = pocket - spent;
+    $('w-spent').textContent = rp(spent); $('w-spent-php').textContent = money(php(spent));
+    $('w-left').textContent = rp(left);   $('w-left-php').textContent = money(php(left));
+    var pct = pocket > 0 ? Math.min(100, spent/pocket*100) : 0, el = $('w-bar');
+    el.firstElementChild.style.width = pct.toFixed(1) + '%';
+    el.className = left < 0 ? 'bar over' : (pct > 80 ? 'bar near' : 'bar');
+    var box = $('spends'); box.innerHTML = '';
+    if (!spends.length){ box.innerHTML = '<p class="small muted">Nothing logged yet.</p>'; return; }
+    spends.slice().reverse().forEach(function(x, ri){
+      var i = spends.length - 1 - ri;
+      var d = document.createElement('div');
+      d.className = 'spend';
+      d.innerHTML = '<span class="lbl"></span><span class="amt">'+rp(x.amt)+'</span>' +
+        '<span class="small muted">'+money(php(x.amt))+'</span>' +
+        '<button class="x btn ghost sm" type="button">×</button>';
+      d.querySelector('.lbl').textContent = x.label;
+      d.querySelector('button').addEventListener('click', function(){
+        spends.splice(i,1); save('bali-spends-v1', spends); wallet();
+      });
+      box.appendChild(d);
     });
-    document.getElementById('prog-count').textContent = done + ' of ' + TASKS.length + ' done';
-    document.getElementById('prog-bar').firstElementChild.style.width =
-      ((done / TASKS.length) * 100).toFixed(0) + '%';
-    document.getElementById('done-all').className = 'done-all' + (done === TASKS.length ? ' show' : '');
   }
+  $('sp-add').addEventListener('click', function(){
+    var amt = parseFloat($('sp-amt').value);
+    if (!isFinite(amt) || amt <= 0) { $('sp-amt').focus(); return; }
+    spends.push({ label: ($('sp-label').value || 'Unlabelled').slice(0,60), amt: amt });
+    save('bali-spends-v1', spends);
+    $('sp-label').value = ''; $('sp-amt').value = '';
+    wallet();
+  });
+  $('pocket').addEventListener('input', wallet);
+  $('w-clear').addEventListener('click', function(){ spends = []; save('bali-spends-v1', spends); wallet(); });
 
-  var undoSlot = document.getElementById('undo-slot');
+  /* ========== checklists ========== */
+  var PACK = [
+    { id:'poncho', nm:'Compact rain poncho or shell', dt:'22 rain days in December; umbrellas blow out' },
+    { id:'dry',    nm:'Dry bag or zip pouches',        dt:'Phones and documents on boat days' },
+    { id:'grip',   nm:'Shoes with grip',               dt:'Wet temple steps, waterfall paths, Kelingking' },
+    { id:'quick',  nm:'Fast-drying clothes',           dt:'Nothing dries in the humidity' },
+    { id:'sarong', nm:'Sarong or long shorts',         dt:'Knees covered at temples — gate ones are lent, not given' },
+    { id:'repel',  nm:'Insect repellent',              dt:'Worst in the wet season' },
+    { id:'sun',    nm:'Reef-safe sunscreen',           dt:'Far dearer to buy there' },
+    { id:'meds',   nm:'Basic meds + rehydration salts', dt:'Bali belly kit, plus anything prescribed' },
+    { id:'plug',   nm:'Type C/F adapter + power bank',  dt:'Indonesia runs 230V, round two-pin' },
+    { id:'cash',   nm:'Clean, uncreased peso notes',    dt:'Changers reject torn or marked bills' },
+    { id:'copy',   nm:'Printed copy of key bookings',   dt:'Signal is patchy on Penida and inland' },
+    { id:'bag',    nm:'Foldable bag for souvenirs',     dt:'Krisna runs will fill it' }
+  ];
+  var PREP = [
+    { id:'levy',   nm:'Pay the Love Bali levy',        dt:'Rp 150,000 each, official portal, save the QR' },
+    { id:'visa',   nm:'Check your passport entry rule', dt:'Separate from the levy' },
+    { id:'driver', nm:'Book drivers on WhatsApp',       dt:'Confirm overtime rate; send luggage photos' },
+    { id:'kecak',  nm:'Buy Kecak tickets online',       dt:'Temple entry is charged separately' },
+    { id:'boat',   nm:'Book the Penida fast boat direct',dt:'Hotel packages run 2–3x' },
+    { id:'water',  nm:'Book water sports online',       dt:'Up to 73% below counter prices' },
+    { id:'insure', nm:'Travel insurance',               dt:'Check it covers scooters if you ride one' },
+    { id:'sim',    nm:'eSIM or airport SIM',            dt:'Sort before you need a Grab' },
+    { id:'money',  nm:'Pick an authorised changer',     dt:'Not the airport, not the hotel desk' },
+    { id:'share',  nm:'Share this page with the group', dt:'Everyone plans off the same numbers' }
+  ];
+  var cState = load('bali-checks-v3', {});
+  function buildList(where, items, prefix){
+    var box = $(where); box.innerHTML = '';
+    items.forEach(function(t){
+      var key = prefix + t.id;
+      var l = document.createElement('label');
+      l.className = 'chk';
+      l.innerHTML = '<input type="checkbox"'+(cState[key]?' checked':'')+'>' +
+        '<span><span class="nm"></span><span class="dt"></span></span>';
+      l.querySelector('.nm').textContent = t.nm;
+      l.querySelector('.dt').textContent = t.dt;
+      l.querySelector('input').addEventListener('change', function(){
+        cState[key] = this.checked; save('bali-checks-v3', cState); counts();
+      });
+      box.appendChild(l);
+    });
+  }
+  function counts(){
+    var p = PACK.filter(function(t){ return cState['pk'+t.id]; }).length;
+    var r = PREP.filter(function(t){ return cState['pr'+t.id]; }).length;
+    $('pk-count').textContent = p + ' / ' + PACK.length;
+    $('pr-count').textContent = r + ' / ' + PREP.length;
+  }
   var undoTimer = null;
-  document.getElementById('reset-checks').addEventListener('click', function(){
-    var before = JSON.parse(JSON.stringify(state));
-    state = {};
-    persist();
-    paint();
-
-    undoSlot.innerHTML = '<button class="btn undo" type="button">Undo</button>';
-    var btn = undoSlot.querySelector('button');
-    btn.addEventListener('click', function(){
-      state = before;
-      persist();
-      paint();
-      undoSlot.innerHTML = '';
-      if (undoTimer) clearTimeout(undoTimer);
+  $('reset-checks').addEventListener('click', function(){
+    var before = JSON.parse(JSON.stringify(cState));
+    cState = {}; save('bali-checks-v3', cState);
+    buildList('packlist', PACK, 'pk'); buildList('preplist', PREP, 'pr'); counts();
+    $('undo-slot').innerHTML = '<button class="btn ghost sm" type="button">Undo</button>';
+    var b = $('undo-slot').querySelector('button');
+    b.addEventListener('click', function(){
+      cState = before; save('bali-checks-v3', cState);
+      buildList('packlist', PACK, 'pk'); buildList('preplist', PREP, 'pr'); counts();
+      $('undo-slot').innerHTML = ''; if (undoTimer) clearTimeout(undoTimer);
     });
     if (undoTimer) clearTimeout(undoTimer);
-    undoTimer = setTimeout(function(){ undoSlot.innerHTML = ''; }, 10000);
+    undoTimer = setTimeout(function(){ $('undo-slot').innerHTML = ''; }, 10000);
   });
 
-  paint();
-  repriceAll(false);
+  /* ========== document vault: IndexedDB, device-local ========== */
+  var db = null;
+  function openDB(){
+    return new Promise(function(res, rej){
+      try {
+        var r = indexedDB.open('bali-docs', 1);
+        r.onupgradeneeded = function(){ r.result.createObjectStore('files', { keyPath:'id', autoIncrement:true }); };
+        r.onsuccess = function(){ res(r.result); };
+        r.onerror = function(){ rej(r.error); };
+      } catch(e){ rej(e); }
+    });
+  }
+  function tx(mode){ return db.transaction('files', mode).objectStore('files'); }
+  function renderVault(){
+    if (!db) return;
+    var req = tx('readonly').getAll();
+    req.onsuccess = function(){
+      var items = req.result || [], box = $('vault');
+      box.innerHTML = '';
+      $('vault-empty').hidden = items.length > 0;
+      items.forEach(function(it){
+        var url = URL.createObjectURL(it.blob);
+        var d = document.createElement('div');
+        d.className = 'doc';
+        d.innerHTML = '<img alt="">' +
+          '<div class="cap"></div>' +
+          '<button class="x" type="button" aria-label="Delete">×</button>';
+        d.querySelector('img').src = url;
+        d.querySelector('img').alt = it.name;
+        d.querySelector('.cap').textContent = it.name;
+        d.querySelector('button').addEventListener('click', function(){
+          var del = tx('readwrite').delete(it.id);
+          del.onsuccess = function(){ URL.revokeObjectURL(url); renderVault(); };
+        });
+        box.appendChild(d);
+      });
+    };
+  }
+  $('doc-input').addEventListener('change', function(e){
+    if (!db) return;
+    var files = Array.prototype.slice.call(e.target.files || []);
+    var store = tx('readwrite'), pending = files.length;
+    files.forEach(function(f){
+      var r = store.add({ name: f.name.slice(0,48), blob: f });
+      r.onsuccess = r.onerror = function(){ if (--pending === 0) renderVault(); };
+    });
+    e.target.value = '';
+  });
+  openDB().then(function(d){ db = d; renderVault(); }).catch(function(){
+    $('drop').innerHTML = '<strong>Storage unavailable</strong><br><span class="small">This browser blocks local file storage, so the documents tab cannot save anything here.</span>';
+  });
+
+  /* ========== go ========== */
+  buildList('packlist', PACK, 'pk');
+  buildList('preplist', PREP, 'pr');
+  counts();
+  renderItin();
+  reprice(false);
+  wallet();
 })();
 </script>
 </body>
