@@ -216,6 +216,15 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   color:var(--ink-soft);margin-bottom:14px}
 .warnbox{background:var(--coral);color:#fff;border-radius:var(--r-sm);padding:13px 17px;margin-bottom:14px;font-size:.9rem}
 .warnbox b{font-family:var(--display);font-size:1.05rem;letter-spacing:.02em}
+.okbox{background:var(--lagoon);color:#06332c;border-radius:var(--r-sm);padding:13px 17px;margin-bottom:14px;font-size:.9rem}
+.okbox b{font-family:var(--display);font-size:1.05rem;letter-spacing:.02em}
+.doc .ficon{display:flex;align-items:center;justify-content:center;height:120px;background:var(--surface-2);
+  font-family:var(--display);font-weight:900;font-size:1.45rem;color:var(--t-grape);letter-spacing:.04em}
+.doc a.open{display:block;color:inherit;text-decoration:none}
+.vhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:24px 0 8px}
+.vhead h3{margin:0}
+.drops{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));margin-bottom:14px}
+.drops .drop{margin-bottom:0;padding:20px 14px}
 
 .src{font-size:.85rem;columns:2;column-gap:26px}
 .src h3{font-size:.95rem;color:var(--t-grape);margin:0 0 5px}
@@ -620,13 +629,40 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
     Your screenshots are stored in this browser only. They are never uploaded, never part of the shared page, and nobody you send the link to can see them — so each of you adds your own IDs on your own device. Clearing your browser data deletes them, so keep the originals in your photos too.
   </div>
   <p class="lead">Boarding passes, e-visas, hotel vouchers, insurance, IDs, the Love Bali levy QR.</p>
-  <label class="drop" for="doc-input" id="drop">
-    <strong>Tap to add a screenshot</strong><br>
-    <span class="small">Images only · stored on this device</span>
-    <input id="doc-input" type="file" accept="image/*" multiple hidden>
-  </label>
+
+  <div class="vhead"><h3>On this phone</h3><span class="tag" id="pv-count">0</span></div>
+  <p class="small muted" style="margin-top:-4px">Images and PDFs. Nothing here is uploaded or shared.</p>
+  <div class="drops">
+    <label class="drop" for="doc-input" id="drop">
+      <strong>Add a file</strong><br>
+      <span class="small">Image or PDF</span>
+      <input id="doc-input" type="file" accept="image/*,application/pdf" multiple hidden>
+    </label>
+    <label class="drop" for="cam-input">
+      <strong>Use the camera</strong><br>
+      <span class="small">Photograph a document</span>
+      <input id="cam-input" type="file" accept="image/*" capture="environment" hidden>
+    </label>
+  </div>
   <div class="vault" id="vault"></div>
-  <p class="small muted" id="vault-empty">Nothing saved yet.</p>
+  <p class="small muted" id="vault-empty">Nothing saved on this device yet.</p>
+  <div class="actionbar"><button class="btn ghost sm" id="export-btn" type="button" hidden>Download a backup</button>
+    <span class="small muted" id="export-note" hidden>Clearing your browser wipes these — keep a copy.</span></div>
+
+  <hr class="wave">
+
+  <div class="vhead"><h3>Shared with the group</h3><span class="tag" id="sh-count">0</span></div>
+  <div class="okbox">
+    <b>Everyone with the link sees these.</b><br>
+    For the things the group needs in common — hotel voucher, driver's quote, the itinerary, a restaurant menu. Not for passports, IDs or boarding passes: those carry your document number and date of birth, and a forwarded link cannot be taken back.
+  </div>
+  <label class="drop" for="sh-input" id="sh-drop" hidden>
+    <strong>Upload for the group</strong><br>
+    <span class="small">Image or PDF · visible to anyone with the link</span>
+    <input id="sh-input" type="file" accept="image/*,application/pdf" multiple hidden>
+  </label>
+  <div class="vault" id="shared"></div>
+  <p class="small muted" id="shared-note">Checking…</p>
 </section>
 
 <hr class="wave">
@@ -672,6 +708,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1008,9 +1045,14 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
     undoTimer = setTimeout(function(){ $('undo-slot').innerHTML = ''; }, 10000);
   });
 
-  /* ========== document vault: IndexedDB, device-local ========== */
-  var db = null;
-  function openDB(){
+  /* ========== documents: private vault (device) + shared folder (uploaded) ========== */
+  function isPdf(t){ return (t || '').indexOf('pdf') !== -1; }
+  function kb(n){ return n > 1048576 ? (n/1048576).toFixed(1) + ' MB' : Math.round(n/1024) + ' KB'; }
+  var downloader = null;
+
+  /* ---- private: IndexedDB, never leaves the device ---- */
+  var idb = null, privUrls = [];
+  function openIDB(){
     return new Promise(function(res, rej){
       try {
         var r = indexedDB.open('bali-docs', 1);
@@ -1020,45 +1062,171 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
       } catch(e){ rej(e); }
     });
   }
-  function tx(mode){ return db.transaction('files', mode).objectStore('files'); }
-  function renderVault(){
-    if (!db) return;
-    var req = tx('readonly').getAll();
+  function store(mode){ return idb.transaction('files', mode).objectStore('files'); }
+
+  function renderPrivate(){
+    if (!idb) return;
+    var req = store('readonly').getAll();
     req.onsuccess = function(){
       var items = req.result || [], box = $('vault');
+      privUrls.forEach(URL.revokeObjectURL);
+      privUrls = [];
       box.innerHTML = '';
       $('vault-empty').hidden = items.length > 0;
+      $('pv-count').textContent = String(items.length);
+      var canExport = items.length > 0 && downloader && typeof JSZip !== 'undefined';
+      $('export-btn').hidden = !canExport;
+      $('export-note').hidden = !canExport;
       items.forEach(function(it){
-        var url = URL.createObjectURL(it.blob);
         var d = document.createElement('div');
         d.className = 'doc';
-        d.innerHTML = '<img alt="">' +
-          '<div class="cap"></div>' +
-          '<button class="x" type="button" aria-label="Delete">×</button>';
-        d.querySelector('img').src = url;
-        d.querySelector('img').alt = it.name;
+        if (isPdf(it.type)) {
+          d.innerHTML = '<div class="ficon">PDF</div><div class="cap"></div>' +
+            '<button class="x" type="button" aria-label="Delete">×</button>';
+        } else {
+          var url = URL.createObjectURL(it.blob);
+          privUrls.push(url);
+          d.innerHTML = '<img alt=""><div class="cap"></div>' +
+            '<button class="x" type="button" aria-label="Delete">×</button>';
+          d.querySelector('img').src = url;
+          d.querySelector('img').alt = it.name;
+        }
         d.querySelector('.cap').textContent = it.name;
         d.querySelector('button').addEventListener('click', function(){
-          var del = tx('readwrite').delete(it.id);
-          del.onsuccess = function(){ URL.revokeObjectURL(url); renderVault(); };
+          var del = store('readwrite').delete(it.id);
+          del.onsuccess = renderPrivate;
         });
         box.appendChild(d);
       });
     };
   }
-  $('doc-input').addEventListener('change', function(e){
-    if (!db) return;
-    var files = Array.prototype.slice.call(e.target.files || []);
-    var store = tx('readwrite'), pending = files.length;
+  function addPrivate(files){
+    if (!idb || !files.length) return;
+    var s = store('readwrite'), pending = files.length;
     files.forEach(function(f){
-      var r = store.add({ name: f.name.slice(0,48), blob: f });
-      r.onsuccess = r.onerror = function(){ if (--pending === 0) renderVault(); };
+      var r = s.add({ name: f.name.slice(0,48) || 'photo.jpg', type: f.type, blob: f });
+      r.onsuccess = r.onerror = function(){ if (--pending === 0) renderPrivate(); };
     });
+  }
+  $('doc-input').addEventListener('change', function(e){
+    addPrivate(Array.prototype.slice.call(e.target.files || [])); e.target.value = '';
+  });
+  $('cam-input').addEventListener('change', function(e){
+    addPrivate(Array.prototype.slice.call(e.target.files || [])); e.target.value = '';
+  });
+
+  /* ---- backup: zip everything in the private vault ---- */
+  $('export-btn').addEventListener('click', function(){
+    if (!idb || !downloader || typeof JSZip === 'undefined') return;
+    var btn = this, old = btn.textContent;
+    btn.textContent = 'Zipping…'; btn.disabled = true;
+    var req = store('readonly').getAll();
+    req.onsuccess = function(){
+      var zip = new JSZip(), seen = {};
+      (req.result || []).forEach(function(it){
+        var n = it.name;
+        if (seen[n]) n = (++seen[it.name]) + '-' + n; else seen[n] = 1;
+        zip.file(n, it.blob);
+      });
+      zip.generateAsync({ type: 'blob' }).then(function(b){
+        return downloader.save({ filename: 'bali-documents.zip', data: b });
+      }).then(function(){
+        btn.textContent = 'Saved'; setTimeout(function(){ btn.textContent = old; btn.disabled = false; }, 1800);
+      }).catch(function(){
+        btn.textContent = 'Not saved'; setTimeout(function(){ btn.textContent = old; btn.disabled = false; }, 2200);
+      });
+    };
+  });
+
+  /* ---- shared: uploaded assets indexed in db ---- */
+  var sAssets = null, sDb = null;
+  function rowsFrom(snap){
+    var out = [];
+    if (!snap) return out;
+    if (Array.isArray(snap)) return snap;
+    if (Array.isArray(snap.docs)) return snap.docs.map(function(d){ return typeof d.data === 'function' ? d.data() : d; });
+    if (typeof snap.forEach === 'function'){
+      snap.forEach(function(d){ out.push(typeof d.data === 'function' ? d.data() : d); });
+    }
+    return out;
+  }
+  function renderShared(rows){
+    var box = $('shared');
+    box.innerHTML = '';
+    $('sh-count').textContent = String(rows.length);
+    $('shared-note').hidden = rows.length > 0;
+    if (!rows.length) $('shared-note').textContent = sAssets
+      ? 'Nothing shared yet. Upload something the whole group needs.'
+      : 'Nothing shared yet.';
+    rows.forEach(function(r){
+      var d = document.createElement('div');
+      d.className = 'doc';
+      var inner = isPdf(r.type) ? '<div class="ficon">PDF</div>' : '<img alt="" src="">';
+      d.innerHTML = '<a class="open" href="' + '" target="_blank" rel="noopener">' + inner +
+        '</a><div class="cap"></div>';
+      var a = d.querySelector('a');
+      a.href = r.url;
+      var img = d.querySelector('img');
+      if (img){ img.src = r.url; img.alt = r.name; }
+      d.querySelector('.cap').textContent = r.name + ' · ' + kb(r.size || 0);
+      if (sAssets && sDb){
+        var btn = document.createElement('button');
+        btn.className = 'x'; btn.type = 'button'; btn.textContent = '×';
+        btn.setAttribute('aria-label', 'Delete');
+        btn.addEventListener('click', function(){
+          sDb.collection('shared').doc(r.id).delete()
+            .then(function(){ return sAssets.delete(r.id); })
+            .then(refreshShared).catch(refreshShared);
+        });
+        d.appendChild(btn);
+      }
+      box.appendChild(d);
+    });
+  }
+  function refreshShared(){
+    if (!sDb) return;
+    sDb.collection('shared').get().then(function(snap){ renderShared(rowsFrom(snap)); }).catch(function(){});
+  }
+  $('sh-input').addEventListener('change', function(e){
+    var files = Array.prototype.slice.call(e.target.files || []);
     e.target.value = '';
+    if (!sAssets || !sDb || !files.length) return;
+    var drop = $('sh-drop'), label = drop.querySelector('strong'), was = label.textContent;
+    label.textContent = 'Uploading…';
+    var jobs = files.map(function(f){
+      return sAssets.upload(f).then(function(a){
+        return sDb.collection('shared').doc(a.id).set({
+          id: a.id, url: a.url, name: f.name.slice(0,48), type: a.contentType || f.type, size: a.sizeBytes || f.size
+        });
+      });
+    });
+    Promise.all(jobs).then(function(){
+      label.textContent = was; refreshShared();
+    }).catch(function(){
+      label.textContent = 'Upload failed — try again';
+      setTimeout(function(){ label.textContent = was; }, 2600);
+      refreshShared();
+    });
   });
-  openDB().then(function(d){ db = d; renderVault(); }).catch(function(){
-    $('drop').innerHTML = '<strong>Storage unavailable</strong><br><span class="small">This browser blocks local file storage, so the documents tab cannot save anything here.</span>';
+
+  /* ---- light the features up once the viewer answers ---- */
+  openIDB().then(function(d){ idb = d; renderPrivate(); }).catch(function(){
+    $('drop').innerHTML = '<strong>Storage unavailable</strong><br><span class="small">This browser blocks local file storage.</span>';
+    $('pv-count').textContent = '—';
   });
+  if (window.claude && typeof window.claude.use === 'function'){
+    window.claude.use('downloads').then(function(d){ downloader = d; renderPrivate(); }).catch(function(){});
+    Promise.all([window.claude.use('db'), window.claude.use('assets')]).then(function(r){
+      sDb = r[0]; sAssets = r[1];
+      $('sh-drop').hidden = !(sDb && sAssets);
+      if (!sDb){ $('shared-note').textContent = 'Sign in to see what the group has shared.'; return; }
+      if (!sAssets) $('shared-note').textContent = 'You can view what is shared here, but only an editor can upload.';
+      refreshShared();
+      try { sDb.collection('shared').onSnapshot(function(snap){ renderShared(rowsFrom(snap)); }); } catch(e){}
+    }).catch(function(){ $('shared-note').textContent = 'Shared folder unavailable right now.'; });
+  } else {
+    $('shared-note').textContent = 'Shared folder unavailable in this view.';
+  }
 
   /* ========== go ========== */
   buildList('packlist', PACK, 'pk');
