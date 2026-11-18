@@ -723,6 +723,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   <div class="actionbar"><button class="btn ghost sm" id="export-btn" type="button" hidden>Download a backup</button>
     <span class="small muted" id="export-note" hidden>Clearing your browser wipes these — keep a copy.</span></div>
 
+  <div id="shared-sec">
   <hr class="wave">
 
   <div class="vhead"><h3>Shared with the group</h3><span class="tag" id="sh-count">0</span></div>
@@ -737,6 +738,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   </label>
   <div class="vault" id="shared"></div>
   <p class="small muted" id="shared-note">Checking…</p>
+  </div>
 </section>
 
 <hr class="wave">
@@ -1148,7 +1150,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
       box.innerHTML = '';
       $('vault-empty').hidden = items.length > 0;
       $('pv-count').textContent = String(items.length);
-      var canExport = items.length > 0 && downloader && typeof JSZip !== 'undefined';
+      var canExport = items.length > 0 && typeof JSZip !== 'undefined';
       $('export-btn').hidden = !canExport;
       $('export-note').hidden = !canExport;
       items.forEach(function(it){
@@ -1191,7 +1193,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 
   /* ---- backup: zip everything in the private vault ---- */
   $('export-btn').addEventListener('click', function(){
-    if (!idb || !downloader || typeof JSZip === 'undefined') return;
+    if (!idb || typeof JSZip === 'undefined') return;
     var btn = this, old = btn.textContent;
     btn.textContent = 'Zipping…'; btn.disabled = true;
     var req = store('readonly').getAll();
@@ -1203,7 +1205,13 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
         zip.file(n, it.blob);
       });
       zip.generateAsync({ type: 'blob' }).then(function(b){
-        return downloader.save({ filename: 'bali-documents.zip', data: b });
+        if (downloader) return downloader.save({ filename: 'bali-documents.zip', data: b });
+        /* self-hosted: no capability, so use an ordinary browser download */
+        var url = URL.createObjectURL(b), a = document.createElement('a');
+        a.href = url; a.download = 'bali-documents.zip';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+        return true;
       }).then(function(){
         btn.textContent = 'Saved'; setTimeout(function(){ btn.textContent = old; btn.disabled = false; }, 1800);
       }).catch(function(){
@@ -1299,7 +1307,8 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
       try { sDb.collection('shared').onSnapshot(function(snap){ renderShared(rowsFrom(snap)); }); } catch(e){}
     }).catch(function(){ $('shared-note').textContent = 'Shared folder unavailable right now.'; });
   } else {
-    $('shared-note').textContent = 'Shared folder unavailable in this view.';
+    /* self-hosted copy: the shared folder needs Claude's runtime, so drop it */
+    $('shared-sec').hidden = true;
   }
 
   /* ========== go ========== */
