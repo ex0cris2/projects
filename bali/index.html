@@ -26,6 +26,7 @@ if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)
   --f-sky:#9BF6FF;  --f-blue:#A0C4FF;  --f-lilac:#BDB2FF; --f-rose:#FFC6FF;
 
   --paper:#FFFBF7; --surface:#FFFFFF; --surface-2:#FFF8FC; --sea:#E8FCFF;
+  --ombre:linear-gradient(165deg,#FFF1F1 0%,#FFF6EC 16%,#FEFEE7 32%,#F1FDEC 48%,#EAFBFF 64%,#EFF3FF 80%,#FAF0FF 100%);
   --ink:#2A2135; --ink-soft:#6A5F78;
   --line:#F1E7F2; --line-strong:#D8C6E3;
 
@@ -45,7 +46,8 @@ if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)
   :root:not([data-theme="light"]){
     color-scheme: dark;
     --paper:#120620; --surface:#1d0e2c; --surface-2:#271438;
-    --ink:#f5eefa; --ink-soft:#b69ec6;
+    --ombre:linear-gradient(165deg,#1B0A1E 0%,#160A22 18%,#0F0D24 38%,#0B1420 58%,#111022 78%,#1C0A20 100%);
+  --ink:#f5eefa; --ink-soft:#b69ec6;
     --line:#3a2252; --line-strong:#5b3875;
     --head-bg:#540D6E; --head-ink:#ffffff;
     --sel-bg:#540D6E;  --sel-ink:#ffffff; --sel-mark:#BDB2FF;
@@ -57,6 +59,7 @@ if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)
 :root[data-theme="dark"]{
   color-scheme: dark;
   --paper:#120620; --surface:#1d0e2c; --surface-2:#271438;
+  --ombre:linear-gradient(165deg,#1B0A1E 0%,#160A22 18%,#0F0D24 38%,#0B1420 58%,#111022 78%,#1C0A20 100%);
   --ink:#f5eefa; --ink-soft:#b69ec6;
   --line:#3a2252; --line-strong:#5b3875;
   --head-bg:#540D6E; --head-ink:#ffffff;
@@ -67,7 +70,9 @@ if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.55}
+body{margin:0;background:var(--paper);background-image:var(--ombre);
+  background-attachment:fixed;background-size:cover;background-repeat:no-repeat;
+  color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.55;min-height:100vh}
 .wrap{max-width:880px;margin:0 auto;padding:0 16px 90px}
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.01em}
 h1{font-size:clamp(2rem,7vw,3.1rem);font-weight:800;line-height:1;letter-spacing:-.02em}
@@ -561,20 +566,21 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 
   <h3 style="margin:22px 0 10px">Weather</h3>
   <div class="wx">
-    <div class="wxcard">
-      <div class="d">Today · Wed 18 Nov</div>
-      <div class="t">33° / 27°C</div>
-      <div class="c">Cloudy, 91°/80°F</div>
-      <span class="rain">65% rain</span>
+    <div class="wxcard" data-date="2026-11-19">
+      <div class="d"><span class="rel">Today</span> · Thu 19 Nov</div>
+      <div class="t">32° / 27°C</div>
+      <div class="c">Cloudy, 89°/80°F</div>
+      <span class="rain">55% rain</span>
     </div>
-    <div class="wxcard tmr">
-      <div class="d">Tomorrow · Thu 19 Nov</div>
-      <div class="t">29° / 27°C</div>
+    <div class="wxcard tmr" data-date="2026-11-20">
+      <div class="d"><span class="rel">Tomorrow</span> · Fri 20 Nov</div>
+      <div class="t">29° / 26°C</div>
       <div class="c">Rain likely, 85°/80°F</div>
-      <span class="rain">65% rain</span>
+      <span class="rain">55% rain</span>
     </div>
   </div>
-  <p class="small muted">Checked 18 Nov 2026. This is a snapshot, not a live feed — a static page can't refresh it, so ask me for an update any time. <strong>For the trip itself:</strong> December is the wet season, averaging 27–30°C with roughly 22 rain days and 280–300 mm, usually heavy but short and most often mid-afternoon or evening.</p>
+  <p class="small muted" id="wx-stale" hidden style="color:var(--t-coral);font-weight:600">These two days have passed — the figures below are the forecast as it stood on 19 Nov, not today\u2019s. Ask me to refresh.</p>
+  <p class="small muted">Checked 19 Nov 2026. This is a snapshot, not a live feed — a static page can't refresh it, so ask me for an update any time. <strong>For the trip itself:</strong> December is the wet season, averaging 27–30°C with roughly 22 rain days and 280–300 mm, usually heavy but short and most often mid-afternoon or evening.</p>
 
   <label class="drop" for="wx-input" style="margin:12px 0">
     <strong>Add a weather screenshot</strong><br>
@@ -1558,6 +1564,24 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
     /* self-hosted copy: the shared folder needs Claude's runtime, so drop it */
     $('shared-sec').hidden = true;
   }
+
+  /* ========== weather: never let the card claim a stale day is "today" ========== */
+  (function(){
+    function iso(d){
+      return d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
+    }
+    var today = iso(new Date()), stale = false;
+    Array.prototype.forEach.call(document.querySelectorAll('.wxcard[data-date]'), function(c){
+      var rel = c.querySelector('.rel');
+      if (!rel) return;
+      var diff = Math.round(
+        (new Date(c.getAttribute('data-date') + 'T00:00:00') - new Date(today + 'T00:00:00')) / 86400000);
+      if (diff === 0) rel.textContent = 'Today';
+      else if (diff === 1) rel.textContent = 'Tomorrow';
+      else { rel.textContent = 'Forecast'; stale = true; }
+    });
+    if (stale) $('wx-stale').hidden = false;
+  })();
 
   /* ========== offline: register the worker where the host allows one ========== */
   try {
