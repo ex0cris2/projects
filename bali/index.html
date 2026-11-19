@@ -26,7 +26,7 @@ if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)
   --f-sky:#9BF6FF;  --f-blue:#A0C4FF;  --f-lilac:#BDB2FF; --f-rose:#FFC6FF;
 
   --paper:#FFFBF7; --surface:#FFFFFF; --surface-2:#FFF8FC; --sea:#E8FCFF;
-  --ombre:linear-gradient(165deg,#FFF1F1 0%,#FFF6EC 16%,#FEFEE7 32%,#F1FDEC 48%,#EAFBFF 64%,#EFF3FF 80%,#FAF0FF 100%);
+  --ombre:linear-gradient(165deg,#FFADAD 0%,#FFD6A5 14%,#FDFFB6 28%,#CAFFBF 43%,#9BF6FF 58%,#A0C4FF 73%,#BDB2FF 87%,#FFC6FF 100%);
   --ink:#2A2135; --ink-soft:#6A5F78;
   --line:#F1E7F2; --line-strong:#D8C6E3;
 
@@ -46,7 +46,7 @@ if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)
   :root:not([data-theme="light"]){
     color-scheme: dark;
     --paper:#120620; --surface:#1d0e2c; --surface-2:#271438;
-    --ombre:linear-gradient(165deg,#1B0A1E 0%,#160A22 18%,#0F0D24 38%,#0B1420 58%,#111022 78%,#1C0A20 100%);
+    --ombre:linear-gradient(165deg,#3E0E52 0%,#2B1064 20%,#121F63 40%,#0B3553 58%,#0E4247 76%,#2F1152 100%);
   --ink:#f5eefa; --ink-soft:#b69ec6;
     --line:#3a2252; --line-strong:#5b3875;
     --head-bg:#540D6E; --head-ink:#ffffff;
@@ -59,7 +59,7 @@ if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)
 :root[data-theme="dark"]{
   color-scheme: dark;
   --paper:#120620; --surface:#1d0e2c; --surface-2:#271438;
-  --ombre:linear-gradient(165deg,#1B0A1E 0%,#160A22 18%,#0F0D24 38%,#0B1420 58%,#111022 78%,#1C0A20 100%);
+  --ombre:linear-gradient(165deg,#3E0E52 0%,#2B1064 20%,#121F63 40%,#0B3553 58%,#0E4247 76%,#2F1152 100%);
   --ink:#f5eefa; --ink-soft:#b69ec6;
   --line:#3a2252; --line-strong:#5b3875;
   --head-bg:#540D6E; --head-ink:#ffffff;
@@ -70,9 +70,11 @@ if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);background-image:var(--ombre);
-  background-attachment:fixed;background-size:cover;background-repeat:no-repeat;
-  color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.55;min-height:100vh}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:16.5px;line-height:1.55;min-height:100vh;position:relative}
+/* the ombre lives on its own fixed layer: background-attachment:fixed is
+   unreliable in iOS Safari and composites badly over tall content */
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--ombre)}
 .wrap{max-width:880px;margin:0 auto;padding:0 16px 90px}
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.01em}
 h1{font-size:clamp(2rem,7vw,3.1rem);font-weight:800;line-height:1;letter-spacing:-.02em}
